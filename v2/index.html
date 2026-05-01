@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a1409">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Str3pcamp">
+<title>Str3pcamp 🏕️</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <div id="header">
+    <div class="logo">
+      <span class="logo-icon"><img src="data:image/jpeg;base64,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" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #3d6e47;display:block;" alt="avatar"></span>
+      <div>
+        <div class="logo-title">Str3pcamp</div>
+        <div class="logo-sub">campeggio · europa</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div id="user-panel">
+        <button id="auth-btn">Login</button>
+        <span id="user-label"></span>
+      </div>
+      <button id="install-btn">⬇ INSTALLA</button>
+      <span id="sync-badge" style="font-family:'Space Mono',monospace;font-size:9px;color:#4a7a4e;letter-spacing:.5px;">💾 Locale</span>
+    </div>
+  </div>
+
+  <div id="nav">
+    <button class="nav-btn active" data-panel="map"><span>🗺️</span><span>MAPPA</span></button>
+    <button class="nav-btn" data-panel="list"><span>📋</span><span>LISTA</span></button>
+    <button class="nav-btn" data-panel="add"><span>➕</span><span>AGGIUNGI</span></button>
+  </div>
+
+  <div id="content">
+    <!-- MAP -->
+    <div class="panel active" id="map-panel">
+      <div id="leaflet-map"></div>
+      <div id="layer-switcher">
+        <button class="layer-btn active" id="btn-street" onclick="setLayer('street')">🗺 Mappa</button>
+        <button class="layer-btn" id="btn-satellite" onclick="setLayer('satellite')">🛰 Satellite</button>
+        <button class="layer-btn" id="btn-topo" onclick="setLayer('topo')">⛰ Topo</button>
+      </div>
+      <button id="gps-btn" onclick="goToGPS()">📍</button>
+      <!-- LEGEND -->
+      <div id="legend">
+        <div><span>🏠</span> Accoglienza</div>
+        <div><span>⛺🌲</span> Libero · tenda</div>
+        <div><span>⛺🚐</span> Libero · tetto</div>
+        <div><span>⛺🌲🚐</span> Libero · entrambi</div>
+        <div><span>⛺💰🌲</span> Camping · tenda</div>
+        <div><span>⛺💰🚐</span> Camping · tetto</div>
+        <div><span>⛺💰🌲🚐</span> Camping · entrambi</div>
+      </div>
+
+      <div id="search-bar">
+        <input id="search-input" type="search" placeholder="🔍 Cerca...">
+        <select id="filter-type">
+          <option value="tutti">Tutti i tipi</option>
+          <option value="accoglienza">🏠 Accoglienza</option>
+          <option value="libero">⛺🌲 Libero</option>
+          <option value="camping">⛺💰 Camping</option>
+        </select>
+        <span class="cnt" id="count-badge">0</span>
+      </div>
+      <div id="detail-card"></div>
+    </div>
+
+    <!-- LIST -->
+    <div class="panel" id="list-panel">
+      <div class="list-h">Luoghi <span id="list-count">0</span></div>
+      <div id="list-container"></div>
+    </div>
+
+    <!-- ADD -->
+    <div class="panel" id="add-panel">
+      <div class="a-header">Aggiungi Luogo</div>
+      <div class="a-step" id="step-label">PASSO 1 DI 4</div>
+      <div class="sbar" id="step-bar"><div class="sseg"></div><div class="sseg"></div><div class="sseg"></div><div class="sseg"></div></div>
+      <div id="step-content"></div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<!-- CONFIRM DELETE MODAL -->
+<div id="confirm-modal">
+  <div id="confirm-box">
+    <div class="confirm-title">🗑 Elimina luogo</div>
+    <div class="confirm-msg" id="confirm-msg">Sei sicuro di voler eliminare questo luogo? L'operazione non è reversibile.</div>
+    <div class="confirm-btns">
+      <button class="confirm-no" onclick="closeConfirm()">✕ Annulla</button>
+      <button class="confirm-yes" id="confirm-yes-btn">🗑 Elimina</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div id="edit-modal">
+  <div id="edit-box">
+    <div class="edit-title">✏️ Modifica Luogo</div>
+    <div id="edit-content"></div>
+  </div>
+</div>
+
+<div id="auth-modal">
+  <div id="auth-box">
+    <div class="auth-title" id="auth-title">🔐 Accedi a Str3pcamp</div>
+    <div class="auth-msg" id="auth-msg">Usa email e password per sincronizzare i tuoi campeggi.</div>
+    <label class="flabel">Email</label>
+    <input class="finput" id="auth-email" type="email" placeholder="tuo@email.it">
+    <label class="flabel">Password</label>
+    <input class="finput" id="auth-password" type="password" placeholder="Password">
+    <div class="btn-row" style="margin-top:16px">
+      <button class="bback" id="auth-cancel" type="button">Annulla</button>
+      <button class="bprim" id="auth-submit" type="button">Accedi</button>
+    </div>
+    <div class="auth-switch">Non hai un account? <button id="auth-toggle" type="button">Registrati</button></div>
+  </div>
+</div>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>
