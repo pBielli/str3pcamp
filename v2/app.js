@@ -731,7 +731,26 @@ async function initApp() {
   document.getElementById('auth-toggle')?.addEventListener('click', toggleAuthMode);
   document.getElementById('auth-btn')?.addEventListener('click', openLoginModal);
 
-  document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(new Blob([JSON.stringify({ name: 'Str3pcamp', short_name: 'Str3pcamp', description: 'Campeggio libero in Europa', start_url: '.', display: 'standalone', background_color: '#0a1409', theme_color: '#0a1409', icons: [{ src: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%230a1409%22/><text y=%2272%22 font-size=%2270%22 x=%2212%22>🏕️</text></svg>', sizes: 'any', type: 'image/svg+xml' }] }, { type: 'application/json' }))}">`);
+  const manifestData = {
+    name: 'Str3pcamp',
+    short_name: 'Str3pcamp',
+    description: 'Campeggio libero in Europa',
+    start_url: '.',
+    display: 'standalone',
+    background_color: '#0a1409',
+    theme_color: '#0a1409',
+    icons: [
+      {
+        src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="18" fill="%230a1409"/><text y="72" font-size="70" x="12">🏕️</text></svg>',
+        sizes: 'any',
+        type: 'image/svg+xml'
+      }
+    ]
+  };
+  const manifestLink = document.createElement('link');
+  manifestLink.rel = 'manifest';
+  manifestLink.href = URL.createObjectURL(new Blob([JSON.stringify(manifestData)], { type: 'application/json' }));
+  document.head.appendChild(manifestLink);
 
   initFirebaseAuth(handleAuthState);
   setSyncBadge('local');
