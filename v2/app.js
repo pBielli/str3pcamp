@@ -4,15 +4,15 @@ const STORAGE_KEY = 'str3pcamp-v1';
 
 const SPOT_TYPES = {
   accoglienza: { label: 'Accoglienza', color: '#e8a030', markerColor: '#c47d10' },
-  libero:      { label: 'Libero',      color: '#3d8a4e', markerColor: '#2a6a38' },
-  camping:     { label: 'Camping',     color: '#3b7ade', markerColor: '#2a5ab8' },
+  libero: { label: 'Libero', color: '#3d8a4e', markerColor: '#2a6a38' },
+  camping: { label: 'Camping', color: '#3b7ade', markerColor: '#2a5ab8' },
 };
 
 const VEH = { tenda: '⛺', rooftop: '🚐' };
 
-const ENV_TAGS = ['🌊 Mare','⛰ Montagna','🌄 Colline','♨️ Terme','🏛 Cultura','🎡 Attrazioni','🌲 Foresta','🏞 Lago','🌾 Pianura','🛶 Fiume','🍷 Vino & Cibo','🚴 Sport'];
+const ENV_TAGS = ['🌊 Mare', '⛰ Montagna', '🌄 Colline', '♨️ Terme', '🏛 Cultura', '🎡 Attrazioni', '🌲 Foresta', '🏞 Lago', '🌾 Pianura', '🛶 Fiume', '🍷 Vino & Cibo', '🚴 Sport'];
 
-const SERVICES = { acqua:'💧 Acqua', parcheggio:'🅿️ Parcheggio', sentieri:'🥾 Sentieri', fuochi:'🔥 Fuochi', docce:'🚿 Docce', bagni:'🚻 Bagni', ristoro:'🍽️ Ristoro', wifi:'📶 WiFi', elettricità:'⚡ Elettricità', animali:'🐾 Animali ok' };
+const SERVICES = { acqua: '💧 Acqua', parcheggio: '🅿️ Parcheggio', sentieri: '🥾 Sentieri', fuochi: '🔥 Fuochi', docce: '🚿 Docce', bagni: '🚻 Bagni', ristoro: '🍽️ Ristoro', wifi: '📶 WiFi', elettricità: '⚡ Elettricità', animali: '🐾 Animali ok' };
 
 const DEFAULT_SPOTS = [
   {
@@ -21,8 +21,8 @@ const DEFAULT_SPOTS = [
     lat: 44.4094352, lng: 8.6643941,
     region: 'Liguria · Italia',
     spotType: 'libero',
-    vehicles: ['tenda','rooftop'],
-    environments: ['🌊 Mare','🌄 Colline'],
+    vehicles: ['tenda', 'rooftop'],
+    environments: ['🌊 Mare', '🌄 Colline'],
     description: 'Sosta libera vicino al mare, nei dintorni di Genova. Ottima posizione per chi ama la costa ligure con le sue calette e i borghi caratteristici.',
     services: [],
     rating: 5
@@ -33,8 +33,8 @@ const DEFAULT_SPOTS = [
     lat: 44.0416170, lng: 9.9681311,
     region: 'Liguria · Italia',
     spotType: 'libero',
-    vehicles: ['tenda','rooftop'],
-    environments: ['🌊 Mare','⛰ Montagna','🌄 Colline'],
+    vehicles: ['tenda', 'rooftop'],
+    environments: ['🌊 Mare', '⛰ Montagna', '🌄 Colline'],
     description: 'Sosta libera nell\'entroterra delle Cinque Terre, tra colline e mare. Paesaggi spettacolari con vista sul golfo e sentieri verso i borghi patrimonio UNESCO.',
     services: [],
     rating: 5
@@ -46,7 +46,7 @@ const DEFAULT_SPOTS = [
     region: 'Val d\'Orcia · Toscana · Italia',
     spotType: 'libero',
     vehicles: ['rooftop'],
-    environments: ['♨️ Terme','🌄 Colline','🏛 Cultura','🎡 Attrazioni'],
+    environments: ['♨️ Terme', '🌄 Colline', '🏛 Cultura', '🎡 Attrazioni'],
     description: 'Sosta libera vicinissima alle Terme di San Filippo e alla celebre "Balena Bianca", la cascata di travertino naturale dove le acque termali calde formano vasche naturali biancastre. Immersa nella magia della Val d\'Orcia.',
     services: [],
     rating: 5
@@ -67,7 +67,7 @@ let selectedId = null;
 let searchVal = '';
 let filterVal = 'tutti';
 let addStep = 1;
-let addForm = { name:'', lat:'', lng:'', region:'', spotType:'libero', vehicles:[], environments:[], description:'', services:[], rating:4 };
+let addForm = { name: '', lat: '', lng: '', region: '', spotType: 'libero', vehicles: [], environments: [], description: '', services: [], rating: 4 };
 let toastT;
 
 function setSyncBadge(status) {
@@ -75,10 +75,10 @@ function setSyncBadge(status) {
   const badge = document.getElementById('sync-badge');
   if (!badge) return;
   const states = {
-    local:   { text: '💾 Locale',   color: '#4a7a4e' },
-    syncing: { text: '🔄 Sync...',  color: '#e8a030' },
-    online:  { text: '☁️ Online',   color: '#3d8a4e' },
-    error:   { text: '⚠️ Offline',  color: '#8a4040' },
+    local: { text: '💾 Locale', color: '#4a7a4e' },
+    syncing: { text: '🔄 Sync...', color: '#e8a030' },
+    online: { text: '☁️ Online', color: '#3d8a4e' },
+    error: { text: '⚠️ Offline', color: '#8a4040' },
   };
   const s = states[status] || states.local;
   badge.textContent = s.text;
@@ -238,7 +238,7 @@ function loadLocal() {
 }
 
 function saveLocal() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(spots)); } catch {}
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(spots)); } catch { }
 }
 
 async function fbSet(spot) {
@@ -277,13 +277,13 @@ function getMarkerEmojis(spot) {
   if (spot.spotType === 'accoglienza') return '🏠';
   const base = '⛺';
   const isCamping = spot.spotType === 'camping';
-  const hasTenda   = spot.vehicles && spot.vehicles.includes('tenda');
+  const hasTenda = spot.vehicles && spot.vehicles.includes('tenda');
   const hasRooftop = spot.vehicles && spot.vehicles.includes('rooftop');
   let txt = base;
   if (isCamping) txt += '💰';
   if (hasTenda && hasRooftop) txt += '🌲🚐';
-  else if (hasTenda)          txt += '🌲';
-  else if (hasRooftop)        txt += '🚐';
+  else if (hasTenda) txt += '🌲';
+  else if (hasRooftop) txt += '🚐';
   return txt;
 }
 
@@ -375,14 +375,14 @@ function showDetail(spot) {
     const el = document.getElementById(id);
     if (!el) return;
     el.addEventListener('click', fn);
-    el.addEventListener('touchend', function(e){ e.preventDefault(); fn(); }, { passive: false });
+    el.addEventListener('touchend', function (e) { e.preventDefault(); fn(); }, { passive: false });
   }
   const sid = spot.id;
   const slat = spot.lat, slng = spot.lng;
-  tap('d-btn-nav',  () => navTo(slat, slng));
-  tap('d-btn-cls',  () => closeDetail());
+  tap('d-btn-nav', () => navTo(slat, slng));
+  tap('d-btn-cls', () => closeDetail());
   tap('d-btn-edit', () => openEdit(sid));
-  tap('d-btn-del',  () => confirmDelete(sid));
+  tap('d-btn-del', () => confirmDelete(sid));
 
   card.classList.add('open');
 }
@@ -430,15 +430,15 @@ function openEdit(id) {
     <input class="finput" id="e-region" type="text" value="${esc(spot.region)}">
     <label class="flabel">TIPO DI POSTO</label>
     <div class="type-grid" id="e-type-grid">
-      <div class="type-card${spot.spotType==='accoglienza'?' on':''}" onclick="eSetType(this,'accoglienza')"><div class="tc-icon">🏠</div><div class="tc-label">ACCOGLIENZA</div></div>
-      <div class="type-card${spot.spotType==='libero'?' on':''}" onclick="eSetType(this,'libero')"><div class="tc-icon">⛺🌲</div><div class="tc-label">LIBERO</div></div>
-      <div class="type-card${spot.spotType==='camping'?' on':''}" onclick="eSetType(this,'camping')" style="grid-column:span 2"><div class="tc-icon">⛺💰</div><div class="tc-label">CAMPING A PAGAMENTO</div></div>
+      <div class="type-card${spot.spotType === 'accoglienza' ? ' on' : ''}" onclick="eSetType(this,'accoglienza')"><div class="tc-icon">🏠</div><div class="tc-label">ACCOGLIENZA</div></div>
+      <div class="type-card${spot.spotType === 'libero' ? ' on' : ''}" onclick="eSetType(this,'libero')"><div class="tc-icon">⛺🌲</div><div class="tc-label">LIBERO</div></div>
+      <div class="type-card${spot.spotType === 'camping' ? ' on' : ''}" onclick="eSetType(this,'camping')" style="grid-column:span 2"><div class="tc-icon">⛺💰</div><div class="tc-label">CAMPING A PAGAMENTO</div></div>
     </div>
     <div id="e-veh-wrap">
       <label class="flabel">VEICOLI ACCETTATI</label>
       <div class="veh-row">
-        <div class="veh-btn${(spot.vehicles||[]).includes('tenda')?' on':''}" id="e-veh-tenda" onclick="eTogVeh(this,'tenda')">⛺<div class="vl">TENDA</div></div>
-        <div class="veh-btn${(spot.vehicles||[]).includes('rooftop')?' on':''}" id="e-veh-rooftop" onclick="eTogVeh(this,'rooftop')">🚐<div class="vl">TENDA DA TETTO</div></div>
+        <div class="veh-btn${(spot.vehicles || []).includes('tenda') ? ' on' : ''}" id="e-veh-tenda" onclick="eTogVeh(this,'tenda')">⛺<div class="vl">TENDA</div></div>
+        <div class="veh-btn${(spot.vehicles || []).includes('rooftop') ? ' on' : ''}" id="e-veh-rooftop" onclick="eTogVeh(this,'rooftop')">🚐<div class="vl">TENDA DA TETTO</div></div>
       </div>
     </div>
     <label class="flabel">LATITUDINE</label>
@@ -448,11 +448,11 @@ function openEdit(id) {
     <label class="flabel">DESCRIZIONE</label>
     <textarea class="finput ftarea" id="e-desc">${esc(spot.description)}</textarea>
     <label class="flabel">AMBIENTE E ATTRAZIONI</label>
-    <div class="env-grid">${ENV_TAGS.map(e=>`<div class="echip${(spot.environments||[]).includes(e)?' on':''}" onclick="this.classList.toggle('on')">${e}</div>`).join('')}</div>
+    <div class="env-grid">${ENV_TAGS.map(e => `<div class="echip${(spot.environments || []).includes(e) ? ' on' : ''}" onclick="this.classList.toggle('on')">${e}</div>`).join('')}</div>
     <label class="flabel">VALUTAZIONE</label>
-    <div class="star-row" id="e-stars">${[1,2,3,4,5].map(n=>`<span class="star-p" data-n="${n}" style="color:${n<=(spot.rating||0)?'#f0b429':'#2a4a2a'}" onclick="eSetRat(${n})">★</span>`).join('')}</div>
+    <div class="star-row" id="e-stars">${[1, 2, 3, 4, 5].map(n => `<span class="star-p" data-n="${n}" style="color:${n <= (spot.rating || 0) ? '#f0b429' : '#2a4a2a'}" onclick="eSetRat(${n})">★</span>`).join('')}</div>
     <label class="flabel">SERVIZI</label>
-    <div class="svcs-grid">${Object.entries(SERVICES).map(([k,v])=>`<div class="schip${(spot.services||[]).includes(k)?' on':''}" onclick="this.classList.toggle('on')" data-svc="${k}">${v}</div>`).join('')}</div>
+    <div class="svcs-grid">${Object.entries(SERVICES).map(([k, v]) => `<div class="schip${(spot.services || []).includes(k) ? ' on' : ''}" onclick="this.classList.toggle('on')" data-svc="${k}">${v}</div>`).join('')}</div>
     <div class="btn-row" style="margin-top:16px">
       <button class="bback" onclick="closeEdit()">✕ Annulla</button>
       <button class="bprim" onclick="saveEdit(${id})">✓ Salva</button>
@@ -519,7 +519,7 @@ function goToGPS() {
 function filtered() {
   const q = searchVal.toLowerCase();
   return spots.filter(s =>
-    (s.name.toLowerCase().includes(q) || (s.region||'').toLowerCase().includes(q)) &&
+    (s.name.toLowerCase().includes(q) || (s.region || '').toLowerCase().includes(q)) &&
     (filterVal === 'tutti' || s.spotType === filterVal)
   );
 }
@@ -534,21 +534,21 @@ function renderList() {
   document.getElementById('list-container').innerHTML = list.map((s, i) => {
     const ti = SPOT_TYPES[s.spotType] || SPOT_TYPES.libero;
     const emojis = getMarkerEmojis(s);
-    return `<div class="scard" style="animation-delay:${i*30}ms" onclick="goToSpot(${s.id})">
+    return `<div class="scard" style="animation-delay:${i * 30}ms" onclick="goToSpot(${s.id})">
       <div class="s-icons">${emojis}</div>
       <div style="flex:1;min-width:0">
         <div><span class="s-name">${s.name}</span><span class="s-type-badge" style="background:${ti.color}22;color:${ti.color}">${ti.label}</span></div>
         <div class="s-region">${s.region}</div>
         <div class="s-desc">${s.description}</div>
-        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">${(s.environments||[]).map(e=>`<span style="font-size:11px;color:#4a8a5a">${e}</span>`).join('')}</div>
-        <div class="s-stars">${'★'.repeat(s.rating||0)}${'☆'.repeat(5-(s.rating||0))}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">${(s.environments || []).map(e => `<span style="font-size:11px;color:#4a8a5a">${e}</span>`).join('')}</div>
+        <div class="s-stars">${'★'.repeat(s.rating || 0)}${'☆'.repeat(5 - (s.rating || 0))}</div>
       </div></div>`;
   }).join('');
 }
 
 function goToSpot(id) { switchPanel('map'); setTimeout(() => selectSpot(id), 120); }
 
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
 function renderAddStep() {
   const stepLabel = document.getElementById('step-label');
@@ -565,21 +565,21 @@ function renderAddStep() {
       <input class="finput" id="f-region" type="text" placeholder="Es. Lazio · Italia" value="${esc(addForm.region)}">
       <label class="flabel">TIPO DI POSTO</label>
       <div class="type-grid">
-        <div class="type-card${addForm.spotType==='accoglienza'?' on':''}" onclick="setSpotType('accoglienza')">
+        <div class="type-card${addForm.spotType === 'accoglienza' ? ' on' : ''}" onclick="setSpotType('accoglienza')">
           <div class="tc-icon">🏠</div><div class="tc-label">ACCOGLIENZA<br>struttura ricettiva</div>
         </div>
-        <div class="type-card${addForm.spotType==='libero'?' on':''}" onclick="setSpotType('libero')">
+        <div class="type-card${addForm.spotType === 'libero' ? ' on' : ''}" onclick="setSpotType('libero')">
           <div class="tc-icon">⛺🌲</div><div class="tc-label">LIBERO<br>campeggio gratuito</div>
         </div>
-        <div class="type-card${addForm.spotType==='camping'?' on':''}" onclick="setSpotType('camping')" style="grid-column:span 2">
+        <div class="type-card${addForm.spotType === 'camping' ? ' on' : ''}" onclick="setSpotType('camping')" style="grid-column:span 2">
           <div class="tc-icon">⛺💰</div><div class="tc-label">CAMPING A PAGAMENTO</div>
         </div>
       </div>
       ${addForm.spotType !== 'accoglienza' ? `
       <label class="flabel">TIPO DI VEICOLO ACCETTATO</label>
       <div class="veh-row">
-        <div class="veh-btn${addForm.vehicles.includes('tenda')?' on':''}" onclick="togVeh('tenda')">⛺<div class="vl">TENDA</div></div>
-        <div class="veh-btn${addForm.vehicles.includes('rooftop')?' on':''}" onclick="togVeh('rooftop')">🚐<div class="vl">TENDA DA TETTO</div></div>
+        <div class="veh-btn${addForm.vehicles.includes('tenda') ? ' on' : ''}" onclick="togVeh('tenda')">⛺<div class="vl">TENDA</div></div>
+        <div class="veh-btn${addForm.vehicles.includes('rooftop') ? ' on' : ''}" onclick="togVeh('rooftop')">🚐<div class="vl">TENDA DA TETTO</div></div>
       </div>` : ''}
       <div class="btn-row"><button class="bprim" onclick="s1next()">Avanti →</button></div>`;
   } else if (addStep === 2) {
@@ -600,9 +600,9 @@ function renderAddStep() {
       <label class="flabel">DESCRIZIONE *</label>
       <textarea class="finput ftarea" id="f-desc" placeholder="Descrivi il luogo, l'atmosfera, cosa si può fare...">${esc(addForm.description)}</textarea>
       <label class="flabel">AMBIENTE E ATTRAZIONI</label>
-      <div class="env-grid">${ENV_TAGS.map(e=>`<div class="echip${addForm.environments.includes(e)?' on':''}" onclick="togEnv('${e.replace(/'/g,"\\'")}')">${e}</div>`).join('')}</div>
+      <div class="env-grid">${ENV_TAGS.map(e => `<div class="echip${addForm.environments.includes(e) ? ' on' : ''}" onclick="togEnv('${e.replace(/'/g, "\\'")}')">${e}</div>`).join('')}</div>
       <label class="flabel">VALUTAZIONE</label>
-      <div class="star-row">${[1,2,3,4,5].map(n=>`<span class="star-p" style="color:${n<=(addForm.rating||0)?'#f0b429':'#2a4a2a'}" onclick="setRat(${n})">★</span>`).join('')}</div>
+      <div class="star-row">${[1, 2, 3, 4, 5].map(n => `<span class="star-p" style="color:${n <= (addForm.rating || 0) ? '#f0b429' : '#2a4a2a'}" onclick="setRat(${n})">★</span>`).join('')}</div>
       <div class="btn-row" style="margin-top:14px">
         <button class="bback" onclick="addStep=2;renderAddStep()">← Indietro</button>
         <button class="bprim" onclick="s3next()">Avanti →</button>
@@ -610,14 +610,14 @@ function renderAddStep() {
   } else {
     c.innerHTML = `
       <label class="flabel">SERVIZI DISPONIBILI</label>
-      <div class="svcs-grid">${Object.entries(SERVICES).map(([k,v])=>`<div class="schip${addForm.services.includes(k)?' on':''}" onclick="togSvc('${k}')">${v}</div>`).join('')}</div>
+      <div class="svcs-grid">${Object.entries(SERVICES).map(([k, v]) => `<div class="schip${addForm.services.includes(k) ? ' on' : ''}" onclick="togSvc('${k}')">${v}</div>`).join('')}</div>
       <div class="prev-box" style="margin-top:16px">
         <div class="prev-lbl">ANTEPRIMA</div>
         <div style="font-size:20px;margin-bottom:4px">${getMarkerEmojis(addForm)}</div>
         <div style="font-size:17px;font-weight:700;color:#c8e4b8">${esc(addForm.name)}</div>
-        <div style="font-family:'Space Mono',monospace;font-size:10px;color:#4a7a4e">${esc(addForm.region)} · ${SPOT_TYPES[addForm.spotType]?.label||''}</div>
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:#4a7a4e">${esc(addForm.region)} · ${SPOT_TYPES[addForm.spotType]?.label || ''}</div>
         <div style="font-size:12px;color:#5a8a5e;margin-top:4px">${esc(addForm.description)}</div>
-        ${(addForm.environments||[]).length ? `<div style="margin-top:6px;font-size:12px">${addForm.environments.join(' ')}</div>` : ''}
+        ${(addForm.environments || []).length ? `<div style="margin-top:6px;font-size:12px">${addForm.environments.join(' ')}</div>` : ''}
       </div>
       <div class="btn-row">
         <button class="bback" onclick="addStep=3;renderAddStep()">← Indietro</button>
@@ -637,7 +637,7 @@ function togSvc(k) { addForm.services = addForm.services.includes(k) ? addForm.s
 function setRat(n) { addForm.rating = n; renderAddStep(); }
 
 function s1next() {
-  addForm.name   = document.getElementById('f-name').value.trim();
+  addForm.name = document.getElementById('f-name').value.trim();
   addForm.region = document.getElementById('f-region').value.trim();
   if (!addForm.name || !addForm.region) { toast('Nome e regione sono obbligatori', 'error'); return; }
   if (addForm.spotType !== 'accoglienza' && !addForm.vehicles.length) { toast('Seleziona almeno un tipo di veicolo', 'error'); return; }
@@ -671,7 +671,7 @@ function submitSpot() {
   spots.push(ns);
   save(ns);
   if (!useFirebase) { addMarker(ns); renderList(); }
-  addForm = { name:'', lat:'', lng:'', region:'', spotType:'libero', vehicles:[], environments:[], description:'', services:[], rating:4 };
+  addForm = { name: '', lat: '', lng: '', region: '', spotType: 'libero', vehicles: [], environments: [], description: '', services: [], rating: 4 };
   addStep = 1;
   switchPanel('map');
   setTimeout(() => { map.setView([ns.lat, ns.lng], 13, { animate: true }); selectSpot(ns.id); }, 150);
@@ -712,9 +712,9 @@ async function initApp() {
   map = L.map('leaflet-map', { zoomControl: false }).setView([45.5, 12], 5);
   L.control.zoom({ position: 'bottomright' }).addTo(map);
   const LAYERS = {
-    street:    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '© CartoDB © OpenStreetMap', maxZoom: 19, subdomains: 'abcd' }),
+    street: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '© CartoDB © OpenStreetMap', maxZoom: 19, subdomains: 'abcd' }),
     satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '© Esri World Imagery', maxZoom: 19 }),
-    topo:      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', { attribution: '© Esri World Topo', maxZoom: 19 }),
+    topo: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', { attribution: '© Esri World Topo', maxZoom: 19 }),
   };
   LAYERS.street.addTo(map);
   let curLayer = 'street';
@@ -731,7 +731,7 @@ async function initApp() {
   document.getElementById('auth-toggle')?.addEventListener('click', toggleAuthMode);
   document.getElementById('auth-btn')?.addEventListener('click', openLoginModal);
 
-  document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(new Blob([JSON.stringify({name:'Str3pcamp', short_name:'Str3pcamp', description:'Campeggio libero in Europa', start_url:'.', display:'standalone', background_color:'#0a1409', theme_color:'#0a1409', icons:[{src:'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%230a1409%22/><text y=%2272%22 font-size=%2270%22 x=%2212%22>🏕️</text></svg>',sizes:'any',type:'image/svg+xml'}]}],{type:'application/json'}))}">`);
+  document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(new Blob([JSON.stringify({ name: 'Str3pcamp', short_name: 'Str3pcamp', description: 'Campeggio libero in Europa', start_url: '.', display: 'standalone', background_color: '#0a1409', theme_color: '#0a1409', icons: [{ src: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%230a1409%22/><text y=%2272%22 font-size=%2270%22 x=%2212%22>🏕️</text></svg>', sizes: 'any', type: 'image/svg+xml' }] }, { type: 'application/json' }))}">`);
 
   initFirebaseAuth(handleAuthState);
   setSyncBadge('local');
