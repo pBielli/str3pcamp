@@ -1,0 +1,130 @@
+{
+  "app": {
+    "name": "Str3pcamp",
+    "shortName": "Str3pcamp",
+    "description": "Campeggio libero in Europa",
+    "version": "2.0.0",
+    "locale": "it",
+    "themeColor": "#0a1409",
+    "backgroundColor": "#0a1409"
+  },
+  "map": {
+    "defaultCenter": [45.5, 12],
+    "defaultZoom": 5,
+    "defaultLayer": "street",
+    "layers": {
+      "street": {
+        "label": "Mappa",
+        "emoji": "🗺",
+        "url": "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+        "attribution": "© CartoDB © OpenStreetMap",
+        "maxZoom": 19,
+        "subdomains": "abcd"
+      },
+      "satellite": {
+        "label": "Satellite",
+        "emoji": "🛰",
+        "url": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        "attribution": "© Esri World Imagery",
+        "maxZoom": 19
+      },
+      "topo": {
+        "label": "Topo",
+        "emoji": "⛰",
+        "url": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+        "attribution": "© Esri World Topo",
+        "maxZoom": 19
+      }
+    },
+    "userLocationMarker": {
+      "radius": 8,
+      "color": "#3d8a4e",
+      "fillColor": "#5daa6e",
+      "fillOpacity": 0.85,
+      "weight": 2
+    }
+  },
+  "firebase": {
+    "apiKey": "AIzaSyADUSmmfmYIB_7zQNC9YvPJ4yKHQfdoSgQ",
+    "authDomain": "strepcamp.firebaseapp.com",
+    "projectId": "strepcamp",
+    "storageBucket": "strepcamp.firebasestorage.app",
+    "messagingSenderId": "733597281103",
+    "appId": "1:733597281103:web:55ddade1f918ccd686733a"
+  },
+  "storage": {
+    "localKey": "str3pcamp-v1"
+  },
+  "placesApi": {
+    "nominatimUrl": "https://nominatim.openstreetmap.org/search",
+    "nominatimReverse": "https://nominatim.openstreetmap.org/reverse",
+    "photonUrl": "https://photon.komoot.io/api/"
+  },
+  "spotTypes": {
+    "accoglienza": { "label": "Accoglienza", "color": "#e8a030", "markerColor": "#c47d10" },
+    "libero":      { "label": "Libero",      "color": "#3d8a4e", "markerColor": "#2a6a38" },
+    "camping":     { "label": "Camping",     "color": "#3b7ade", "markerColor": "#2a5ab8" }
+  },
+  "vehicles": {
+    "tenda":   { "label": "TENDA",         "emoji": "⛺" },
+    "rooftop": { "label": "TENDA DA TETTO","emoji": "🚐" }
+  },
+  "environmentTags": [
+    "🌊 Mare","⛰ Montagna","🌄 Colline","♨️ Terme","🏛 Cultura",
+    "🎡 Attrazioni","🌲 Foresta","🏞 Lago","🌾 Pianura","🛶 Fiume",
+    "🍷 Vino & Cibo","🚴 Sport"
+  ],
+  "services": {
+    "acqua":       "💧 Acqua",
+    "parcheggio":  "🅿️ Parcheggio",
+    "sentieri":    "🥾 Sentieri",
+    "fuochi":      "🔥 Fuochi",
+    "docce":       "🚿 Docce",
+    "bagni":       "🚻 Bagni",
+    "ristoro":     "🍽️ Ristoro",
+    "wifi":        "📶 WiFi",
+    "elettricita": "⚡ Elettricità",
+    "animali":     "🐾 Animali ok"
+  },
+  "defaultSpots": [
+    {
+      "id": 1,
+      "name": "Sosta libera - Genova Levante",
+      "lat": 44.4094352, "lng": 8.6643941,
+      "region": "Liguria · Italia",
+      "city": "Genova",
+      "spotType": "libero",
+      "vehicles": ["tenda","rooftop"],
+      "environments": ["🌊 Mare","🌄 Colline"],
+      "description": "Sosta libera vicino al mare, nei dintorni di Genova. Ottima posizione per chi ama la costa ligure con le sue calette e i borghi caratteristici.",
+      "services": [],
+      "rating": 5
+    },
+    {
+      "id": 2,
+      "name": "Sosta libera - Cinque Terre entroterra",
+      "lat": 44.041617, "lng": 9.9681311,
+      "region": "Liguria · Italia",
+      "city": "La Spezia",
+      "spotType": "libero",
+      "vehicles": ["tenda","rooftop"],
+      "environments": ["🌊 Mare","⛰ Montagna","🌄 Colline"],
+      "description": "Sosta libera nell'entroterra delle Cinque Terre, tra colline e mare. Paesaggi spettacolari con vista sul golfo e sentieri verso i borghi patrimonio UNESCO.",
+      "services": [],
+      "rating": 5
+    },
+    {
+      "id": 3,
+      "name": "Sosta libera - Terme di San Filippo",
+      "lat": 42.9258709, "lng": 11.7000723,
+      "region": "Val d'Orcia · Toscana · Italia",
+      "city": "Castiglione d'Orcia",
+      "spotType": "libero",
+      "vehicles": ["rooftop"],
+      "environments": ["♨️ Terme","🌄 Colline","🏛 Cultura","🎡 Attrazioni"],
+      "description": "Sosta libera vicinissima alle Terme di San Filippo e alla celebre 'Balena Bianca'. Immersa nella magia della Val d'Orcia.",
+      "services": [],
+      "rating": 5
+    }
+  ]
+}
