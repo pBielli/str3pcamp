@@ -1,0 +1,66 @@
+{
+  "app": {
+    "name": "RunBase",
+    "version": "3.0",
+    "description": "Mappa dei posti segreti per campeggiatori",
+    "owner": "runbase"
+  },
+
+  "firebase": {
+    "accountHint": "Sostituisci con le credenziali del tuo progetto Firebase",
+    "projectId": "RUNBASE_PROJECT_ID",
+    "apiKey": "RUNBASE_API_KEY",
+    "authDomain": "RUNBASE_PROJECT_ID.firebaseapp.com",
+    "storageBucket": "RUNBASE_PROJECT_ID.appspot.com",
+    "messagingSenderId": "RUNBASE_MESSAGING_SENDER_ID",
+    "appId": "RUNBASE_APP_ID"
+  },
+
+  "map": {
+    "defaultCenter": { "lat": 41.9, "lng": 12.5 },
+    "defaultZoom": 6,
+    "locale": "it",
+    "language": "it",
+    "region": "IT",
+    "tileUrl": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    "tileAttribution": "© OpenStreetMap contributors",
+    "geocodingLocale": "it"
+  },
+
+  "spotTypes": {
+    "accoglienza": { "label": "Accoglienza", "color": "#e8a030", "markerColor": "#c47d10" },
+    "libero":      { "label": "Libero",      "color": "#3d8a4e", "markerColor": "#2a6a38" },
+    "camping":     { "label": "Camping",     "color": "#3b7ade", "markerColor": "#2a5ab8" }
+  },
+
+  "vehicles": {
+    "tenda":   { "label": "Tenda",          "emoji": "⛺" },
+    "rooftop": { "label": "Tenda da Tetto", "emoji": "🚐" }
+  },
+
+  "environmentTags": [
+    "🌊 Mare", "⛰ Montagna", "🌄 Colline", "♨️ Terme", "🏛 Cultura",
+    "🎡 Attrazioni", "🌲 Foresta", "🏞 Lago", "🌾 Pianura", "🛶 Fiume",
+    "🍷 Vino & Cibo", "🚴 Sport"
+  ],
+
+  "services": {
+    "acqua":       "💧 Acqua",
+    "parcheggio":  "🅿️ Parcheggio",
+    "sentieri":    "🥾 Sentieri",
+    "fuochi":      "🔥 Fuochi",
+    "docce":       "🚿 Docce",
+    "bagni":       "🚻 Bagni",
+    "ristoro":     "🍽️ Ristoro",
+    "wifi":        "📶 WiFi",
+    "elettricita": "⚡ Elettricità",
+    "animali":     "🐾 Animali ok"
+  },
+
+  "ui": {
+    "primaryColor": "#2a6a38",
+    "accentColor": "#e8a030",
+    "dangerColor": "#c0392b",
+    "language": "it"
+  }
+}

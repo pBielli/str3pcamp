@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#2a6a38">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>RunBase — Mappa Segreti</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ── Mappa ─────────────────────────────────── -->
+<div id="map"></div>
+
+<!-- ── Toolbar superiore ─────────────────────── -->
+<div id="toolbar">
+  <span class="logo">🏕 RunBase</span>
+  <div class="search-wrap">
+    <span class="ico">🔍</span>
+    <input id="search-input" type="search" placeholder="Cerca un posto…" autocomplete="off">
+  </div>
+  <button class="btn-icon" id="btn-locate" title="Posizione attuale">📍</button>
+  <button class="btn-icon" id="btn-menu" title="Menu">☰</button>
+</div>
+
+<!-- ── Barra filtri ───────────────────────────── -->
+<div id="filter-bar">
+  <button class="filter-chip active" data-filter="all">Tutti</button>
+  <!-- Popolato dinamicamente da toolbar.js -->
+</div>
+
+<!-- ── FAB aggiungi ───────────────────────────── -->
+<button id="fab-add" title="Aggiungi posto">＋</button>
+
+<!-- ── Bottom navigation ─────────────────────── -->
+<nav id="bottom-nav">
+  <button class="nav-tab active" data-tab="map">
+    <span class="icon">🗺️</span>
+    <span>Mappa</span>
+  </button>
+  <button class="nav-tab" data-tab="list">
+    <span class="icon">📋</span>
+    <span>Lista</span>
+  </button>
+  <button class="nav-tab" data-tab="places">
+    <span class="icon">🔖</span>
+    <span>Salvati</span>
+  </button>
+  <button class="nav-tab" data-tab="profile">
+    <span class="icon">👤</span>
+    <span>Profilo</span>
+  </button>
+</nav>
+
+<!-- ── Overlay + Drawer form aggiungi ────────── -->
+<div class="drawer-overlay" id="drawer-overlay"></div>
+<div class="drawer" id="drawer-add">
+  <div class="drawer-header">
+    <span class="drawer-title">➕ Nuovo posto</span>
+    <button class="drawer-close" id="drawer-close-add">✕</button>
+  </div>
+  <div class="drawer-body" id="add-form-body">
+    <!-- Popolato da addform.js -->
+  </div>
+</div>
+
+<!-- ── Drawer dettaglio posto ─────────────────── -->
+<div class="drawer" id="drawer-detail">
+  <div class="drawer-header">
+    <span class="drawer-title" id="detail-title">Dettaglio</span>
+    <button class="drawer-close" id="drawer-close-detail">✕</button>
+  </div>
+  <div class="drawer-body" id="detail-body"></div>
+</div>
+
+<!-- ── Drawer lista ───────────────────────────── -->
+<div class="drawer" id="drawer-list">
+  <div class="drawer-header">
+    <span class="drawer-title">📋 Tutti i posti</span>
+    <button class="drawer-close" id="drawer-close-list">✕</button>
+  </div>
+  <div class="drawer-body">
+    <div id="list-content"></div>
+  </div>
+</div>
+
+<!-- ── Drawer salvati ─────────────────────────── -->
+<div class="drawer" id="drawer-places">
+  <div class="drawer-header">
+    <span class="drawer-title">🔖 Posti salvati</span>
+    <button class="drawer-close" id="drawer-close-places">✕</button>
+  </div>
+  <div class="drawer-body">
+    <div id="places-content"></div>
+  </div>
+</div>
+
+<!-- ── Toast container ───────────────────────── -->
+<div id="toast-container"></div>
+
+<!-- ── Scripts ───────────────────────────────── -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script type="module">
+  import { loadConfig } from './js/config.js';
+  import { initMap }    from './js/map.js';
+  import { initToolbar } from './js/toolbar.js';
+  import { initAddForm } from './js/addform.js';
+  import { initList }   from './js/list.js';
+  import { initPlaces } from './js/places.js';
+
+  // Toast globale
+  window.showToast = (msg, type = 'success') => {
+    const el = document.createElement('div');
+    el.className = `toast toast-${type}`;
+    el.textContent = msg;
+    document.getElementById('toast-container').appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+  };
+
+  // Bootstrap
+  try {
+    const cfg = await loadConfig();
+    window.APP_CONFIG = cfg;
+
+    await initMap(cfg);
+    initToolbar(cfg);
+    initAddForm(cfg);
+    initList(cfg);
+    initPlaces(cfg);
+
+    // Bottom nav
+    const tabs = document.querySelectorAll('.nav-tab');
+    const drawers = {
+      list:   document.getElementById('drawer-list'),
+      places: document.getElementById('drawer-places'),
+    };
+    const overlay = document.getElementById('drawer-overlay');
+
+    function closeAllDrawers() {
+      document.querySelectorAll('.drawer').forEach(d => d.classList.remove('open'));
+      overlay.classList.remove('open');
+    }
+    overlay.addEventListener('click', closeAllDrawers);
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const key = tab.dataset.tab;
+        closeAllDrawers();
+        if (key === 'list' || key === 'places') {
+          drawers[key]?.classList.add('open');
+          overlay.classList.add('open');
+        }
+      });
+    });
+
+    // Chiudi drawer
+    ['add','detail','list','places'].forEach(id => {
+      document.getElementById(`drawer-close-${id}`)?.addEventListener('click', () => {
+        document.getElementById(`drawer-${id}`)?.classList.remove('open');
+        overlay.classList.remove('open');
+      });
+    });
+
+    // FAB
+    document.getElementById('fab-add').addEventListener('click', () => {
+      closeAllDrawers();
+      document.getElementById('drawer-add').classList.add('open');
+      overlay.classList.add('open');
+    });
+
+    // Localizzazione
+    document.getElementById('btn-locate')?.addEventListener('click', () => {
+      if (!navigator.geolocation) return showToast('GPS non disponibile', 'error');
+      navigator.geolocation.getCurrentPosition(
+        pos => window._map?.setView([pos.coords.latitude, pos.coords.longitude], 14),
+        () => showToast('Posizione non trovata', 'error')
+      );
+    });
+
+  } catch(e) {
+    console.error('Errore avvio app:', e);
+    document.body.innerHTML += `<div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#fff;z-index:9999;padding:24px;text-align:center;"><div><h2>⚠️ Errore</h2><p style="color:#666;margin-top:8px">${e.message}</p></div></div>`;
+  }
+</script>
+
+</body>
+</html>

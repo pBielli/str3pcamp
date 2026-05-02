@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inizializza Config — RunBase Tools</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    body { background: var(--bg); padding: 0; }
+    .tools-page { padding-top: 80px; }
+    .log-box {
+      background: #1a2415; color: #7fff90;
+      border-radius: var(--radius); padding: 16px;
+      font-family: monospace; font-size: .82rem;
+      line-height: 1.7; max-height: 320px;
+      overflow-y: auto; margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+<div class="tools-page">
+  <div class="tools-header">
+    <a href="../index.html" class="btn btn-secondary" style="padding:8px 14px;font-size:.85rem">← Indietro</a>
+    <h1>🌱 Inizializza Config Firestore</h1>
+  </div>
+
+  <div class="tools-section">
+    <div class="tools-section-header">
+      <h2>Carica config.json → Firestore (collection "tools")</h2>
+    </div>
+    <div class="tools-section-body">
+      <p style="font-size:.88rem;color:var(--text-muted);margin-bottom:16px">
+        Questa operazione legge <code>config.json</code> e crea/sovrascrive i documenti nella collection
+        <code>tools</code> di Firestore: <code>spotTypes</code>, <code>vehicles</code>,
+        <code>services</code>, <code>environmentTags</code>.
+      </p>
+      <button class="btn btn-primary" id="btn-seed">🌱 Esegui Seed</button>
+      <button class="btn btn-secondary" id="btn-check" style="margin-left:8px">🔍 Verifica</button>
+      <div class="log-box" id="log">In attesa…</div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { db, collection, doc, setDoc, getDocs } from '../js/firebase-raw.js';
+
+  const log = document.getElementById('log');
+  function addLog(msg, ok = true) {
+    log.innerHTML += `<div style="color:${ok?'#7fff90':'#ff8080'}">${msg}</div>`;
+    log.scrollTop = log.scrollHeight;
+  }
+
+  async function loadConfig() {
+    const res = await fetch('../config.json');
+    return res.json();
+  }
+
+  document.getElementById('btn-seed').addEventListener('click', async () => {
+    log.innerHTML = '';
+    addLog('📂 Carico config.json…');
+    try {
+      const cfg = await loadConfig();
+      addLog('✅ config.json letto');
+
+      // spotTypes
+      addLog('📤 Scrivo tools/spotTypes…');
+      await setDoc(doc(db, 'tools', 'spotTypes'), cfg.spotTypes);
+      addLog('✅ spotTypes salvato');
+
+      // vehicles
+      addLog('📤 Scrivo tools/vehicles…');
+      await setDoc(doc(db, 'tools', 'vehicles'), cfg.vehicles);
+      addLog('✅ vehicles salvato');
+
+      // services
+      addLog('📤 Scrivo tools/services…');
+      await setDoc(doc(db, 'tools', 'services'), cfg.services);
+      addLog('✅ services salvato');
+
+      // environmentTags (come oggetto { list: [...] })
+      addLog('📤 Scrivo tools/environmentTags…');
+      await setDoc(doc(db, 'tools', 'environmentTags'), { list: cfg.environmentTags });
+      addLog('✅ environmentTags salvato');
+
+      addLog('');
+      addLog('🎉 Seed completato! La config è ora su Firestore.');
+    } catch(e) {
+      addLog('❌ Errore: ' + e.message, false);
+      console.error(e);
+    }
+  });
+
+  document.getElementById('btn-check').addEventListener('click', async () => {
+    log.innerHTML = '';
+    addLog('🔍 Verifico collection "tools" su Firestore…');
+    try {
+      const snap = await getDocs(collection(db, 'tools'));
+      if (snap.empty) {
+        addLog('⚠️ Collection "tools" vuota — esegui il Seed', false);
+        return;
+      }
+      snap.forEach(d => {
+        const keys = Object.keys(d.data());
+        addLog(`✅ tools/${d.id} → ${keys.length} chiavi: ${keys.slice(0,5).join(', ')}${keys.length>5?'…':''}`);
+      });
+      addLog('');
+      addLog('👍 Config Firestore presente e leggibile.');
+    } catch(e) {
+      addLog('❌ Errore: ' + e.message, false);
+    }
+  });
+</script>
+</body>
+</html>
