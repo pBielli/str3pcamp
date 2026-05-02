@@ -53,7 +53,7 @@
     "appId": "1:733597281103:web:55ddade1f918ccd686733a"
   },
   "storage": {
-    "localKey": "str3pcamp-v1"
+    "localKey": "str3pcamp"
   },
   "placesApi": {
     "nominatimUrl": "https://nominatim.openstreetmap.org/search",
