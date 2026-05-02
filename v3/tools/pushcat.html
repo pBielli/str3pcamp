@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>Firebase Tags Seeder</title>
+</head>
+<body>
+  <h2>Scrittura tags su Firestore</h2>
+  <button id="upload">Carica dati su Firebase</button>
+
+  <script type="module">
+    // =========================
+    // FIREBASE IMPORT (v9+)
+    // =========================
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    // =========================
+    // CONFIG FIREBASE
+    // =========================
+    const firebaseConfig = {
+    "apiKey": "AIzaSyADUSmmfmYIB_7zQNC9YvPJ4yKHQfdoSgQ",
+    "authDomain": "strepcamp.firebaseapp.com",
+    "projectId": "strepcamp",
+    "storageBucket": "strepcamp.firebasestorage.app",
+    "messagingSenderId": "733597281103",
+    "appId": "1:733597281103:web:55ddade1f918ccd686733a"
+    };
+
+    // =========================
+    // INIT
+    // =========================
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // =========================
+    // DATA DA INSERIRE
+    // =========================
+    const tagsData = {
+      spotTypes: {
+        accoglienza: { label: "Accoglienza", color: "#e8a030", markerColor: "#c47d10" },
+        libero:      { label: "Libero",      color: "#3d8a4e", markerColor: "#2a6a38" },
+        camping:     { label: "Camping",     color: "#3b7ade", markerColor: "#2a5ab8" }
+      },
+      vehicles: {
+        tenda:   { label: "TENDA",         emoji: "⛺" },
+        rooftop: { label: "TENDA DA TETTO","emoji": "🚐" }
+      },
+      environmentTags: [
+        "🌊 Mare","⛰ Montagna","🌄 Colline","♨️ Terme","🏛 Cultura",
+        "🎡 Attrazioni","🌲 Foresta","🏞 Lago","🌾 Pianura","🛶 Fiume",
+        "🍷 Vino & Cibo","🚴 Sport"
+      ],
+      services: {
+        acqua:       "💧 Acqua",
+        parcheggio:  "🅿️ Parcheggio",
+        sentieri:    "🥾 Sentieri",
+        fuochi:      "🔥 Fuochi",
+        docce:       "🚿 Docce",
+        bagni:       "🚻 Bagni",
+        ristoro:     "🍽️ Ristoro",
+        wifi:        "📶 WiFi",
+        elettricita: "⚡ Elettricità",
+        animali:     "🐾 Animali ok"
+      }
+    };
+
+    // =========================
+    // UPLOAD FUNCTION
+    // =========================
+    async function uploadTags() {
+      try {
+        await setDoc(doc(db, "tags", "config"), tagsData);
+        alert("Dati caricati con successo su Firestore!");
+        console.log("Upload completato:", tagsData);
+      } catch (err) {
+        console.error("Errore upload Firestore:", err);
+        alert("Errore durante il caricamento, controlla console.");
+      }
+    }
+
+    document.getElementById("upload").addEventListener("click", uploadTags);
+  </script>
+</body>
+</html>
