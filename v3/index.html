@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a1409">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Str3pcamp">
+<title>Str3pcamp 🏕️</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <div id="header">
+    <div class="logo">
+      <img class="logo-avatar" src="data:image/jpeg;base64,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" alt="Str3pcamp">
+      <div>
+        <div class="logo-title">Str3pcamp</div>
+        <div class="logo-sub">campeggio · europa</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span id="sync-badge">💾 Locale</span>
+      <button id="install-btn">⬇ INSTALLA</button>
+      <span id="user-info"></span>
+      <a href="tools/categories.html" id="tools-btn" class="btn-auth" style="text-decoration:none;font-size:14px">⚙️</a>
+      <button id="login-btn" class="btn-auth">🔑 LOGIN</button>
+      <button id="logout-btn" class="btn-auth">✕ ESCI</button>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div id="nav">
+    <button class="nav-btn active" data-panel="map">
+      <span class="nav-icon">🗺️</span><span>MAPPA</span>
+    </button>
+    <button class="nav-btn" data-panel="list">
+      <span class="nav-icon">📋</span><span>LISTA</span>
+    </button>
+    <button class="nav-btn" data-panel="add">
+      <span class="nav-icon">➕</span><span>AGGIUNGI</span>
+    </button>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="content">
+
+    <!-- MAP PANEL -->
+    <div class="panel active" id="map-panel">
+      <div id="leaflet-map"></div>
+      <div id="layer-switcher"><!-- built by map.js --></div>
+      <button id="gps-btn" title="Vai alla mia posizione">📍</button>
+      <div id="legend">
+        <div><span>👤</span> Sei qui</div>
+        <div><span>🏠</span> Accoglienza</div>
+        <div><span>⛺🌲</span> Libero · tenda</div>
+        <div><span>⛺🚐</span> Libero · tetto</div>
+        <div><span>⛺🌲🚐</span> Libero · entrambi</div>
+        <div><span>⛺💰🌲</span> Camping · tenda</div>
+        <div><span>⛺💰🚐</span> Camping · tetto</div>
+      </div>
+      <div id="search-bar">
+        <input id="search-input" type="search" placeholder="🔍 Cerca luogo o regione...">
+        <select id="filter-type">
+          <option value="tutti">Tutti i tipi</option>
+          <option value="accoglienza">🏠 Accoglienza</option>
+          <option value="libero">⛺🌲 Libero</option>
+          <option value="camping">⛺💰 Camping</option>
+        </select>
+        <span class="cnt" id="count-badge">0</span>
+      </div>
+      <div id="detail-card"></div>
+    </div>
+
+    <!-- LIST PANEL -->
+    <div class="panel" id="list-panel">
+      <div class="list-h">Luoghi <span id="list-count">0</span></div>
+      <div id="list-container"></div>
+    </div>
+
+    <!-- ADD PANEL -->
+    <div class="panel" id="add-panel">
+      <div class="a-header">Aggiungi Luogo</div>
+      <div class="a-step" id="step-label">PASSO 1 DI 4</div>
+      <div class="sbar" id="step-bar">
+        <div class="sseg"></div>
+        <div class="sseg"></div>
+        <div class="sseg"></div>
+        <div class="sseg"></div>
+      </div>
+      <div id="step-content"></div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /app -->
+
+<div id="toast"></div>
+
+<!-- CONFIRM DELETE MODAL -->
+<div id="confirm-modal">
+  <div id="confirm-box">
+    <div class="confirm-title">🗑 Elimina luogo</div>
+    <div class="confirm-msg" id="confirm-msg">Sei sicuro di voler eliminare questo luogo?</div>
+    <div class="confirm-btns">
+      <button class="confirm-no">✕ Annulla</button>
+      <button class="confirm-yes" id="confirm-yes-btn">🗑 Elimina</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div id="edit-modal">
+  <div id="edit-box">
+    <div class="edit-title">✏️ Modifica Luogo</div>
+    <div id="edit-content"></div>
+  </div>
+</div>
+
+<script type="module">
+// ── BOOTSTRAP ────────────────────────────────────────────────
+import * as Firebase from './js/firebase.js';
+import * as Map      from './js/map.js';
+import * as List     from './js/list.js';
+import * as AddForm  from './js/addform.js';
+
+// Load config
+const config = await fetch('./config.json').then(r => r.json());
+window.APP_CONFIG = config;
+
+// Expose config constants for legacy access
+const SPOT_TYPES = config.spotTypes;
+
+// ── FILTER STATE ─────────────────────────────────────────────
+let searchVal = '', filterVal = 'tutti';
+
+function getFiltered() {
+  const q = searchVal.toLowerCase();
+  return Firebase.getSpots().filter(s =>
+    (s.name.toLowerCase().includes(q) ||
+     (s.region || '').toLowerCase().includes(q) ||
+     (s.city   || '').toLowerCase().includes(q)) &&
+    (filterVal === 'tutti' || s.spotType === filterVal)
+  );
+}
+
+window._getFiltered = getFiltered;
+
+// ── WIRE UP MODULES ───────────────────────────────────────────
+Firebase.setOnSpotsChange(() => {
+  Map.renderMarkers();
+  if (document.getElementById('list-panel').classList.contains('active')) {
+    List.renderList(getFiltered());
+  }
+});
+
+// Init map
+Map.initMap(config, SPOT_TYPES, (id) => Map.selectSpot(id), getFiltered);
+window._map = Map.map;
+
+// Firebase setSpots shim
+window._setSpots = (arr) => Firebase.setSpots(arr);
+
+// Expose globals needed by modules
+window.toast       = toast;
+window.switchPanel = switchPanel;
+window.openEdit    = List.openEdit;
+window.confirmDelete = List.confirmDelete;
+
+// ── FIREBASE INIT ─────────────────────────────────────────────
+Firebase.initFirebase(config.firebase, config.defaultSpots);
+
+// ── NAV ───────────────────────────────────────────────────────
+function switchPanel(name) {
+  if (name === 'add' && !Firebase.currentUser) {
+    toast('Accedi con Google per aggiungere luoghi 🔑', 'error');
+    return;
+  }
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(name + '-panel').classList.add('active');
+  document.querySelector(`[data-panel="${name}"]`).classList.add('active');
+
+  if (name === 'map')  setTimeout(() => Map.map.invalidateSize(), 50);
+  if (name === 'list') List.renderList(getFiltered());
+  if (name === 'add')  { AddForm.renderAddStep(); AddForm.onAddPanelOpen(); }
+}
+
+document.querySelectorAll('.nav-btn').forEach(b =>
+  b.addEventListener('click', () => switchPanel(b.dataset.panel))
+);
+
+// Close detail on map click
+Map.map.on('click', () => { if (Map.selectedId) Map.closeDetail(); });
+
+// ── GPS BTN ───────────────────────────────────────────────────
+document.getElementById('gps-btn').addEventListener('click', Map.startUserLocation);
+
+// ── SEARCH & FILTER ───────────────────────────────────────────
+document.getElementById('search-input').addEventListener('input', e => {
+  searchVal = e.target.value;
+  Map.renderMarkers();
+  if (document.getElementById('list-panel').classList.contains('active')) List.renderList(getFiltered());
+});
+
+document.getElementById('filter-type').addEventListener('change', e => {
+  filterVal = e.target.value;
+  Map.renderMarkers();
+  if (document.getElementById('list-panel').classList.contains('active')) List.renderList(getFiltered());
+});
+
+// ── TOAST ─────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg, type = 'success') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 3000);
+}
+
+// ── PWA INSTALL ───────────────────────────────────────────────
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const btn = document.getElementById('install-btn');
+  btn.style.display = 'block';
+  btn.onclick = async () => {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') toast('App installata! 🎉');
+    deferredPrompt = null;
+    btn.style.display = 'none';
+  };
+});
+
+// PWA Manifest
+const manifest = {
+  name: config.app.name,
+  short_name: config.app.shortName,
+  description: config.app.description,
+  start_url: '.',
+  display: 'standalone',
+  background_color: config.app.backgroundColor,
+  theme_color: config.app.themeColor,
+  icons: [{
+    src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="18" fill="%230a1409"/><text y="72" font-size="70" x="12">🏕️</text></svg>',
+    sizes: 'any',
+    type: 'image/svg+xml'
+  }]
+};
+document.head.insertAdjacentHTML('beforeend',
+  `<link rel="manifest" href="${URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/json' }))}">`
+);
+
+// ── AUTO-LOCATE USER ON MAP ───────────────────────────────────
+// Silently place user marker on map load
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    pos => Map.placeUserMarker(pos.coords.latitude, pos.coords.longitude),
+    () => {}, // silent fail
+    { enableHighAccuracy: false, timeout: 5000, maximumAge: 60000 }
+  );
+}
+
+</script>
+</body>
+</html>

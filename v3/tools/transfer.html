@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a1409">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Trasferimento DB · Str3pcamp</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Crimson+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --bg-deep: #060d06; --bg-dark: #0a1409; --bg-card: #0e1c0f; --bg-input: #0d1a0e;
+  --border-dim: #182c1b; --border-mid: #1e3d22; --border-hi: #2d6035;
+  --accent: #3d8a4e; --accent-hi: #4da862;
+  --text-dim: #2d5a32; --text-mid: #4a7a4e; --text-lo: #6a9a6e;
+  --text-main: #a8d4a8; --text-hi: #c8e4b8; --text-body: #e0e8d8;
+  --gold: #f0b429;
+}
+html, body { min-height: 100%; background: var(--bg-deep); color: var(--text-body); font-family: 'Crimson Pro', Georgia, serif; -webkit-font-smoothing: antialiased; }
+::-webkit-scrollbar { width: 3px; } ::-webkit-scrollbar-track { background: var(--bg-dark); } ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+body { padding: 0 0 40px; }
+
+.page-header { padding: 16px 16px 14px; }
+.page-title { font-size: 22px; font-weight: 300; color: var(--text-main); }
+.page-sub { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; margin-top: 3px; }
+
+/* Direction selector */
+.dir-selector { padding: 0 16px 14px; display: flex; gap: 8px; }
+.dir-btn {
+  flex: 1; padding: 11px 8px; border-radius: 8px; border: 1px solid var(--border-dim);
+  background: var(--bg-card); color: var(--text-mid); font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: .5px; cursor: pointer; transition: all .2s; text-align: center; line-height: 1.5;
+}
+.dir-btn:hover { border-color: var(--border-hi); color: var(--text-lo); }
+.dir-btn.active { background: #0f2a14; border-color: var(--accent); color: var(--accent-hi); }
+.dir-btn .dir-label { font-size: 13px; font-family: 'Crimson Pro', Georgia, serif; color: var(--text-main); display: block; margin-bottom: 4px; }
+
+/* DB cards */
+.dbs-wrap { padding: 0 16px 14px; }
+.dbs { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: start; }
+.db-card { background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: 10px; padding: 12px; transition: border-color .3s; }
+.db-card.source { border-color: var(--accent); }
+.db-card.dest { border-color: #3b7ade88; }
+.db-card h2 { font-size: 10px; font-family: 'Space Mono', monospace; color: var(--text-mid); letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase; }
+.db-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 20px; font-size: 9px; font-family: 'Space Mono', monospace; background: var(--bg-deep); border: 1px solid var(--border-dim); color: var(--text-dim); margin-bottom: 8px; }
+.db-badge.online { border-color: #2a5a2e; color: #7ab880; }
+.db-badge.error  { border-color: #5a2020; color: #e48080; }
+.db-badge.loading { border-color: #5a4a20; color: var(--gold); }
+.stat-n { font-family: 'Space Mono', monospace; font-size: 20px; font-weight: 700; color: var(--text-hi); }
+.stat-label { font-size: 11px; color: var(--text-dim); display: block; }
+.spot-list { margin-top: 8px; max-height: 150px; overflow-y: auto; }
+.spot-item { display: flex; align-items: center; gap: 7px; padding: 4px 5px; border-radius: 5px; font-size: 11px; color: var(--text-lo); }
+.spot-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.dot-libero { background: #3d8a4e; } .dot-camping { background: #3b7ade; } .dot-accoglienza { background: #e8a030; }
+.spot-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
+
+.arrow-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 44px; gap: 6px; }
+.arrow-icon { font-size: 22px; color: var(--accent); transition: transform .3s; }
+.arrow-icon.flipped { transform: rotate(180deg); }
+.src-label { font-family: 'Space Mono', monospace; font-size: 8px; color: var(--text-dim); letter-spacing: .5px; text-align: center; }
+
+/* Options panel */
+.panel { background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: 10px; padding: 16px; margin: 0 16px 14px; }
+.panel-title { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--text-mid); letter-spacing: 1px; margin-bottom: 12px; text-transform: uppercase; }
+.options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.opt { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-dim); cursor: pointer; transition: all .2s; }
+.opt:hover { border-color: var(--border-hi); }
+.opt.sel { background: var(--bg-deep); border-color: var(--accent); }
+.opt input[type=radio] { accent-color: var(--accent); margin-top: 2px; flex-shrink: 0; }
+.opt-title { font-size: 14px; font-weight: 600; color: var(--text-hi); margin-bottom: 2px; }
+.opt-desc { font-size: 12px; color: var(--text-mid); line-height: 1.5; }
+
+.btn-go { background: #1e4a28; border: 1px solid var(--accent); color: #a8e4a8; padding: 13px; border-radius: 8px; cursor: pointer; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: .5px; width: 100%; transition: all .2s; }
+.btn-go:hover:not(:disabled) { background: #2a6a38; }
+.btn-go:disabled { opacity: .4; cursor: not-allowed; }
+.btn-go:active:not(:disabled) { transform: scale(.98); }
+
+/* Progress */
+.progress-wrap { display: none; margin-top: 14px; }
+.progress-wrap.show { display: block; }
+.progress-bar-bg { background: var(--bg-deep); border-radius: 4px; height: 6px; overflow: hidden; margin-bottom: 8px; }
+.progress-bar { background: linear-gradient(90deg, #2a5a2e, var(--accent)); height: 100%; width: 0%; border-radius: 4px; transition: width .3s; }
+.progress-log { background: var(--bg-deep); border: 1px solid var(--border-dim); border-radius: 8px; padding: 10px 12px; height: 160px; overflow-y: auto; font-family: 'Space Mono', monospace; font-size: 10px; line-height: 1.8; }
+.log-line { display: flex; gap: 8px; } .log-line.ok { color: #4a9a4e; } .log-line.err { color: #9a4a4a; } .log-line.info { color: #4a7a8e; } .log-line.warn { color: #8e7a2e; }
+.log-ts { color: #2a4a2a; flex-shrink: 0; }
+
+/* Summary */
+.summary { display: none; background: var(--bg-deep); border: 1px solid #2a5a2e; border-radius: 10px; padding: 13px 15px; margin-top: 13px; font-size: 13px; }
+.summary.show { display: block; }
+.sum-title { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--accent); letter-spacing: 1px; margin-bottom: 10px; }
+.sum-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--bg-card); }
+.sum-row:last-child { border-bottom: none; }
+.sum-v { font-family: 'Space Mono', monospace; font-weight: 700; color: var(--text-hi); }
+
+#toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1a3d1f; color: #a8e4a8; padding: 10px 18px; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 11px; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 9998; border: 1px solid #2a6a38; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="page-title">🔄 Trasferimento DB</div>
+  <div class="page-sub">sincronizza tra vecchio e nuovo database</div>
+</div>
+
+<!-- Direction selector -->
+<div class="dir-selector">
+  <button class="dir-btn active" id="dir-old-new" onclick="setDirection('old-new')">
+    <span class="dir-label">Vecchio → Nuovo</span>
+    OLD DB come sorgente<br>NEW DB come destinazione
+  </button>
+  <button class="dir-btn" id="dir-new-old" onclick="setDirection('new-old')">
+    <span class="dir-label">Nuovo → Vecchio</span>
+    NEW DB come sorgente<br>OLD DB come backup
+  </button>
+</div>
+
+<!-- DB Cards -->
+<div class="dbs-wrap">
+  <div class="dbs">
+    <div class="db-card source" id="card-a">
+      <h2 id="card-a-title">📦 VECCHIO DB</h2>
+      <div class="db-badge loading" id="badge-a">⏳ Conn...</div>
+      <div><span class="stat-n" id="count-a">—</span><span class="stat-label">spots</span></div>
+      <div class="spot-list" id="list-a"></div>
+    </div>
+
+    <div class="arrow-col">
+      <div class="arrow-icon" id="arrow-icon">→</div>
+      <div class="src-label" id="arrow-label">SRC</div>
+    </div>
+
+    <div class="db-card dest" id="card-b">
+      <h2 id="card-b-title">☁️ NUOVO DB</h2>
+      <div class="db-badge loading" id="badge-b">⏳ Conn...</div>
+      <div><span class="stat-n" id="count-b">—</span><span class="stat-label">spots</span></div>
+      <div class="spot-list" id="list-b"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Options + Migration -->
+<div class="panel">
+  <div class="panel-title">Opzioni di trasferimento</div>
+  <div class="options">
+    <label class="opt sel" id="opt-merge-label" onclick="selectMode('merge')">
+      <input type="radio" name="mode" value="merge" checked>
+      <div><div class="opt-title">Unisci</div><div class="opt-desc">Aggiunge solo spot non presenti nella destinazione (controllo per ID e nome)</div></div>
+    </label>
+    <label class="opt" id="opt-overwrite-label" onclick="selectMode('overwrite')">
+      <input type="radio" name="mode" value="overwrite">
+      <div><div class="opt-title">Sovrascrivi</div><div class="opt-desc">Elimina tutti gli spot nella destinazione, poi copia dalla sorgente</div></div>
+    </label>
+    <label class="opt" id="opt-skip-label" onclick="selectMode('skip')">
+      <input type="radio" name="mode" value="skip">
+      <div><div class="opt-title">Salta duplicati</div><div class="opt-desc">Copia tutti gli spot, salta solo quelli con lo stesso ID</div></div>
+    </label>
+  </div>
+
+  <button class="btn-go" id="btn-go" disabled onclick="startTransfer()">
+    🔄 AVVIA TRASFERIMENTO
+  </button>
+
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="progress-bar-bg"><div class="progress-bar" id="progress-bar"></div></div>
+    <div class="progress-log" id="progress-log"></div>
+  </div>
+
+  <div class="summary" id="summary">
+    <div class="sum-title">📊 RIEPILOGO</div>
+    <div class="sum-row"><span>Trasferiti</span><span class="sum-v" id="sum-transferred">0</span></div>
+    <div class="sum-row"><span>Saltati</span><span class="sum-v" id="sum-skipped">0</span></div>
+    <div class="sum-row"><span>Errori</span><span class="sum-v" id="sum-errors">0</span></div>
+    <div class="sum-row"><span>Totale nel dest.</span><span class="sum-v" id="sum-total">0</span></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import { initToolbar } from '../js/toolbar.js';
+
+const config = await fetch('../config.json').then(r => r.json());
+await initToolbar({ title: 'TRASFERIMENTO DB', firebaseConfig: config.firebase, currentPage: 'transfer' });
+
+import { initializeApp }                          from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, collection, doc,
+         getDocs, setDoc, deleteDoc, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ── CONFIGS ───────────────────────────────────────────────────
+const OLD_CONFIG = {
+  apiKey:            "AIzaSyDyNA-JKG9MIx6Sf6C-PqoXPUcB7t9ztgg",
+  authDomain:        "str3pcamp.firebaseapp.com",
+  projectId:         "str3pcamp",
+  storageBucket:     "str3pcamp.firebasestorage.app",
+  messagingSenderId: "369800626471",
+  appId:             "1:369800626471:web:540b6bf2f4f0a5b3b32902"
+};
+const NEW_CONFIG = config.firebase; // from config.json
+
+// ── STATE ─────────────────────────────────────────────────────
+let dbOld = null, dbNew = null;
+let oldSpots = [], newSpots = [];
+let migrationMode = 'merge';
+let transferDirection = 'old-new'; // 'old-new' | 'new-old'
+
+// ── DB LOAD ───────────────────────────────────────────────────
+async function loadDB(fbConfig, name, badgeId, countId, listId) {
+  try {
+    const app = initializeApp(fbConfig, name);
+    const db  = getFirestore(app);
+    setBadge(badgeId, 'loading', '⏳ Connessione...');
+    const snap = await getDocs(collection(db, 'spots'));
+    const spots = snap.docs.map(d => ({ ...d.data(), id: d.id }));
+    setBadge(badgeId, 'online', `☁️ ${spots.length} spots`);
+    document.getElementById(countId).textContent = spots.length;
+    const listEl = document.getElementById(listId);
+    listEl.innerHTML = spots.length === 0
+      ? '<div style="font-family:Space Mono,monospace;font-size:10px;color:#2a5a2e;padding:8px 6px;">Nessuno spot</div>'
+      : spots.slice(0, 20).map(s => {
+          const dot = s.spotType === 'camping' ? 'camping' : s.spotType === 'accoglienza' ? 'accoglienza' : 'libero';
+          return `<div class="spot-item"><div class="spot-dot dot-${dot}"></div><div class="spot-name">${s.name || '(no nome)'}</div></div>`;
+        }).join('') + (spots.length > 20 ? `<div style="font-family:Space Mono,monospace;font-size:9px;color:#2a4a2a;padding:4px 5px">... e altri ${spots.length - 20}</div>` : '');
+    return { db, spots };
+  } catch(e) {
+    setBadge(badgeId, 'error', `✗ ${e.code || e.message}`);
+    document.getElementById(countId).textContent = '!';
+    console.error(name, e);
+    return null;
+  }
+}
+
+function setBadge(id, type, text) {
+  const el = document.getElementById(id);
+  el.className = 'db-badge ' + type;
+  el.textContent = text;
+}
+
+// ── INIT BOTH DBS ─────────────────────────────────────────────
+const [resOld, resNew] = await Promise.all([
+  loadDB(OLD_CONFIG, 'old-db', 'badge-a', 'count-a', 'list-a'),
+  loadDB(NEW_CONFIG, 'new-db', 'badge-b', 'count-b', 'list-b'),
+]);
+if (resOld) { dbOld = resOld.db; oldSpots = resOld.spots; }
+if (resNew) { dbNew = resNew.db; newSpots = resNew.spots; }
+if (resOld && resNew) document.getElementById('btn-go').disabled = false;
+
+// ── DIRECTION ─────────────────────────────────────────────────
+window.setDirection = function(dir) {
+  transferDirection = dir;
+  document.getElementById('dir-old-new').classList.toggle('active', dir === 'old-new');
+  document.getElementById('dir-new-old').classList.toggle('active', dir === 'new-old');
+
+  const arrow = document.getElementById('arrow-icon');
+  const cardA = document.getElementById('card-a');
+  const cardB = document.getElementById('card-b');
+  const titleA = document.getElementById('card-a-title');
+  const titleB = document.getElementById('card-b-title');
+  const btnGo  = document.getElementById('btn-go');
+
+  if (dir === 'old-new') {
+    arrow.style.transform = 'none';
+    cardA.className = 'db-card source'; cardB.className = 'db-card dest';
+    titleA.textContent = '📦 VECCHIO DB'; titleB.textContent = '☁️ NUOVO DB';
+    document.getElementById('arrow-label').textContent = 'OLD → NEW';
+    btnGo.textContent = '🔄 AVVIA TRASFERIMENTO';
+  } else {
+    arrow.style.transform = 'rotate(180deg)';
+    cardA.className = 'db-card dest'; cardB.className = 'db-card source';
+    titleA.textContent = '📦 VECCHIO DB (backup)'; titleB.textContent = '☁️ NUOVO DB (sorgente)';
+    document.getElementById('arrow-label').textContent = 'NEW → OLD';
+    btnGo.textContent = '🔄 BACKUP NEW → OLD';
+  }
+};
+
+// ── MODE ──────────────────────────────────────────────────────
+window.selectMode = function(v) {
+  migrationMode = v;
+  ['merge','overwrite','skip'].forEach(m => {
+    document.getElementById('opt-' + m + '-label').classList.toggle('sel', m === v);
+  });
+};
+
+// ── TRANSFER ──────────────────────────────────────────────────
+window.startTransfer = async function() {
+  if (!dbOld || !dbNew) { alert('Entrambi i DB devono essere connessi.'); return; }
+
+  const srcSpots = transferDirection === 'old-new' ? oldSpots : newSpots;
+  const dstDb    = transferDirection === 'old-new' ? dbNew    : dbOld;
+  const dstSpots = transferDirection === 'old-new' ? newSpots : oldSpots;
+  const dstLabel = transferDirection === 'old-new' ? 'NUOVO DB' : 'VECCHIO DB';
+
+  if (srcSpots.length === 0) {
+    alert('Nessuno spot nella sorgente da trasferire.');
+    return;
+  }
+
+  document.getElementById('btn-go').disabled = true;
+  document.getElementById('progress-wrap').classList.add('show');
+  document.getElementById('summary').classList.remove('show');
+  document.getElementById('progress-log').innerHTML = '';
+  setProgress(0);
+
+  let transferred = 0, skipped = 0, errors = 0;
+  log(`Direzione: ${transferDirection === 'old-new' ? 'Vecchio → Nuovo' : 'Nuovo → Vecchio'}`, 'info');
+  log(`Modalità: ${migrationMode}`, 'info');
+  log(`Spots sorgente: ${srcSpots.length}  |  Spots destinazione: ${dstSpots.length}`, 'info');
+  log('────────────────────────────', 'info');
+
+  let currentDstSpots = [...dstSpots];
+
+  if (migrationMode === 'overwrite') {
+    log(`Eliminazione spots in ${dstLabel}...`, 'warn');
+    try {
+      const batch = writeBatch(dstDb);
+      const snap  = await getDocs(collection(dstDb, 'spots'));
+      snap.docs.forEach(d => batch.delete(d.ref));
+      await batch.commit();
+      currentDstSpots = [];
+      log(`Eliminati ${snap.size} spots da ${dstLabel}`, 'warn');
+    } catch(e) {
+      log('Errore eliminazione: ' + e.message, 'err');
+    }
+    setProgress(10);
+  }
+
+  const dstIds   = new Set(currentDstSpots.map(s => String(s.id)));
+  const dstNames = new Set(currentDstSpots.map(s => (s.name||'').toLowerCase().trim()));
+  const total    = srcSpots.length;
+
+  for (let i = 0; i < total; i++) {
+    const spot = srcSpots[i];
+    const sid  = String(spot.id);
+
+    if (migrationMode === 'merge') {
+      const nameMatch = dstNames.has((spot.name||'').toLowerCase().trim());
+      const idMatch   = dstIds.has(sid);
+      if (nameMatch || idMatch) {
+        log(`Saltato (già presente): ${spot.name}`, 'warn');
+        skipped++;
+        setProgress(10 + Math.round(((i+1)/total) * 88));
+        continue;
+      }
+    } else if (migrationMode === 'skip') {
+      if (dstIds.has(sid)) {
+        log(`Saltato (ID duplicato): ${spot.name}`, 'warn');
+        skipped++;
+        setProgress(10 + Math.round(((i+1)/total) * 88));
+        continue;
+      }
+    }
+
+    try {
+      await setDoc(doc(dstDb, 'spots', sid), spot);
+      log(`✓ Trasferito: ${spot.name}`, 'ok');
+      transferred++;
+      dstIds.add(sid);
+      dstNames.add((spot.name||'').toLowerCase().trim());
+    } catch(e) {
+      log(`✗ Errore su "${spot.name}": ${e.message}`, 'err');
+      errors++;
+    }
+
+    setProgress(10 + Math.round(((i+1)/total) * 88));
+    await new Promise(r => setTimeout(r, 80));
+  }
+
+  setProgress(100);
+  log('────────────────────────────', 'info');
+  log(`Completato · Trasferiti: ${transferred} · Saltati: ${skipped} · Errori: ${errors}`, transferred > 0 ? 'ok' : 'warn');
+
+  // Refresh destination count
+  const snapFinal = await getDocs(collection(dstDb, 'spots'));
+  const finalCount = snapFinal.size;
+
+  // Update the right card
+  if (transferDirection === 'old-new') {
+    document.getElementById('count-b').textContent = finalCount;
+    setBadge('badge-b', 'online', `☁️ ${finalCount} spots`);
+    newSpots = snapFinal.docs.map(d => ({ ...d.data(), id: d.id }));
+  } else {
+    document.getElementById('count-a').textContent = finalCount;
+    setBadge('badge-a', 'online', `☁️ ${finalCount} spots`);
+    oldSpots = snapFinal.docs.map(d => ({ ...d.data(), id: d.id }));
+  }
+
+  document.getElementById('sum-transferred').textContent = transferred;
+  document.getElementById('sum-skipped').textContent     = skipped;
+  document.getElementById('sum-errors').textContent      = errors;
+  document.getElementById('sum-total').textContent       = finalCount;
+  document.getElementById('summary').classList.add('show');
+  document.getElementById('btn-go').disabled = false;
+};
+
+// ── HELPERS ───────────────────────────────────────────────────
+function setProgress(pct) {
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+function log(text, type = 'info') {
+  const box = document.getElementById('progress-log');
+  const ts  = new Date().toLocaleTimeString('it', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const line = document.createElement('div');
+  line.className = 'log-line ' + type;
+  line.innerHTML = `<span class="log-ts">${ts}</span>${text}`;
+  box.appendChild(line);
+  box.scrollTop = box.scrollHeight;
+}
+</script>
+</body>
+</html>

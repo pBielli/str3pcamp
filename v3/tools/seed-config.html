@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a1409">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Seed Config · Str3pcamp</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Crimson+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --bg-deep: #060d06; --bg-dark: #0a1409; --bg-card: #0e1c0f;
+  --border-dim: #182c1b; --border-mid: #1e3d22; --border-hi: #2d6035;
+  --accent: #3d8a4e; --accent-hi: #4da862;
+  --text-dim: #2d5a32; --text-mid: #4a7a4e; --text-lo: #6a9a6e;
+  --text-main: #a8d4a8; --text-hi: #c8e4b8; --text-body: #e0e8d8;
+  --gold: #f0b429;
+}
+html, body { min-height: 100%; background: var(--bg-deep); color: var(--text-body); font-family: 'Crimson Pro', Georgia, serif; -webkit-font-smoothing: antialiased; }
+::-webkit-scrollbar { width: 3px; } ::-webkit-scrollbar-track { background: var(--bg-dark); } ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+body { padding: 0 0 40px; }
+
+.page-header { padding: 16px 16px 0; margin-bottom: 16px; }
+.page-title { font-size: 22px; font-weight: 300; color: var(--text-main); }
+.page-sub { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; margin-top: 3px; margin-bottom: 10px; }
+
+.section { padding: 0 16px 16px; }
+.card { background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: 12px; overflow: hidden; margin-bottom: 14px; }
+.card-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid var(--border-dim); }
+.card-title { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--text-mid); letter-spacing: 1px; text-transform: uppercase; }
+.card-badge { font-family: 'Space Mono', monospace; font-size: 9px; padding: 2px 8px; border-radius: 8px; border: 1px solid var(--border-dim); }
+.card-badge.ok { color: var(--accent-hi); border-color: var(--border-hi); }
+.card-badge.warn { color: var(--gold); border-color: #5a4a20; }
+.card-badge.err { color: #e48080; border-color: #5a2020; }
+.card-body { padding: 12px 14px; }
+
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.compare-box { background: var(--bg-deep); border: 1px solid var(--border-dim); border-radius: 8px; padding: 10px; }
+.compare-box-title { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+.compare-item { font-size: 12px; color: var(--text-lo); padding: 2px 0; border-bottom: 1px solid var(--bg-card); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.compare-item:last-child { border-bottom: none; }
+.compare-item.new-item { color: var(--gold); }
+
+.info-box { background: var(--bg-deep); border: 1px solid var(--border-dim); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: var(--text-lo); line-height: 1.6; margin-bottom: 14px; }
+.info-box strong { color: var(--text-main); font-weight: 600; }
+
+.btn-row { display: flex; gap: 10px; }
+.btn-action {
+  flex: 1; padding: 12px; border-radius: 8px; font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: .5px; cursor: pointer; transition: all .2s; border: 1px solid;
+}
+.btn-seed { background: #1e4a28; border-color: var(--accent); color: #a8e4a8; }
+.btn-seed:hover:not(:disabled) { background: #2a6a38; }
+.btn-clear { background: #2a1212; border-color: #5a2020; color: #e48080; }
+.btn-clear:hover:not(:disabled) { background: #3a1818; border-color: #8a3030; }
+.btn-action:disabled { opacity: .4; cursor: not-allowed; }
+.btn-action:active:not(:disabled) { transform: scale(.98); }
+
+.log-wrap { margin-top: 14px; }
+.log-box { background: var(--bg-deep); border: 1px solid var(--border-dim); border-radius: 8px; padding: 10px 12px; max-height: 200px; overflow-y: auto; font-family: 'Space Mono', monospace; font-size: 10px; line-height: 1.8; }
+.log-line.ok { color: #4a9a4e; }
+.log-line.err { color: #9a4a4a; }
+.log-line.info { color: #4a7a8e; }
+.log-ts { color: #2a4a2a; margin-right: 6px; }
+
+#toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1a3d1f; color: #a8e4a8; padding: 10px 18px; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 11px; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 9998; border: 1px solid #2a6a38; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="page-title">🌱 Seed Config</div>
+  <div class="page-sub">popola la raccolta appConfig su Firebase</div>
+</div>
+
+<div class="section">
+  <!-- Info -->
+  <div class="info-box">
+    Questo tool carica i <strong>dati di configurazione</strong> da <code>config.json</code>
+    nella raccolta <code>appConfig/main</code> su Firebase.<br><br>
+    Usalo per <strong>inizializzare</strong> le categorie la prima volta, o per
+    <strong>ripristinare</strong> i valori di default dopo modifiche accidentali.<br><br>
+    Puoi poi modificare le categorie dalla pagina <a href="./categories.html" style="color:var(--accent-hi)">🏷️ Categorie</a>.
+  </div>
+
+  <!-- Comparison card -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">📊 CONFRONTO</span>
+      <span class="card-badge warn" id="cmp-badge">⏳ Caricamento...</span>
+    </div>
+    <div class="card-body">
+      <div class="compare-grid">
+        <div class="compare-box">
+          <div class="compare-box-title">📄 config.json</div>
+          <div id="local-summary"></div>
+        </div>
+        <div class="compare-box">
+          <div class="compare-box-title">☁️ Firebase</div>
+          <div id="remote-summary"></div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-action btn-seed" id="btn-seed" disabled>🌱 CARICA DEFAULTS SU FIREBASE</button>
+      </div>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn-action btn-clear" id="btn-clear" disabled>🗑 CANCELLA CONFIG FIREBASE</button>
+      </div>
+
+      <div class="log-wrap" id="log-wrap" style="display:none">
+        <div class="log-box" id="log-box"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import { initToolbar } from '../js/toolbar.js';
+
+const config = await fetch('../config.json').then(r => r.json());
+await initToolbar({ title: 'SEED CONFIG', firebaseConfig: config.firebase, currentPage: 'seed' });
+
+const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+const { getFirestore, doc, getDoc, setDoc, deleteDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+
+const app  = getApps().length ? getApps()[0] : initializeApp(config.firebase);
+const db   = getFirestore(app);
+const auth = getAuth(app);
+
+let currentUser = null;
+onAuthStateChanged(auth, u => {
+  currentUser = u;
+  document.getElementById('btn-seed').disabled  = !u;
+  document.getElementById('btn-clear').disabled = !u;
+});
+
+// ── Local defaults ────────────────────────────────────────────
+const localDefaults = {
+  spotTypes:       config.spotTypes,
+  vehicles:        config.vehicles,
+  environmentTags: config.environmentTags,
+  services:        config.services,
+};
+
+// Populate local summary
+function renderSummary(data, elId, className = '') {
+  const el = document.getElementById(elId);
+  if (!data) {
+    el.innerHTML = '<div class="compare-item" style="color:#5a2020">— non presente —</div>';
+    return;
+  }
+  const rows = [
+    `${Object.keys(data.spotTypes || {}).length} tipi di posto`,
+    `${Object.keys(data.vehicles || {}).length} veicoli`,
+    `${(data.environmentTags || []).length} ambienti`,
+    `${Object.keys(data.services || {}).length} servizi`,
+  ];
+  el.innerHTML = rows.map(r => `<div class="compare-item ${className}">${r}</div>`).join('');
+}
+
+renderSummary(localDefaults, 'local-summary');
+
+// Try loading remote
+let remoteData = null;
+try {
+  const snap = await getDoc(doc(db, 'appConfig', 'main'));
+  if (snap.exists()) {
+    remoteData = snap.data();
+    renderSummary(remoteData, 'remote-summary');
+    setCmpBadge('ok', '☁️ Presente');
+  } else {
+    document.getElementById('remote-summary').innerHTML = '<div class="compare-item" style="color:#5a2020">— non presente —</div>';
+    setCmpBadge('warn', '⚠️ Non inizializzato');
+  }
+} catch(e) {
+  document.getElementById('remote-summary').innerHTML = `<div class="compare-item" style="color:#9a4a4a">${e.message}</div>`;
+  setCmpBadge('err', '✗ Errore');
+}
+
+function setCmpBadge(type, text) {
+  const el = document.getElementById('cmp-badge');
+  el.className = 'card-badge ' + type;
+  el.textContent = text;
+}
+
+// ── Actions ───────────────────────────────────────────────────
+document.getElementById('btn-seed').onclick = async () => {
+  if (!currentUser) { showToast('Devi fare login', 'err'); return; }
+  const btn = document.getElementById('btn-seed');
+  btn.disabled = true; btn.textContent = '⏳ Caricamento...';
+  showLog();
+  logLine('Avvio seed config da config.json...', 'info');
+  try {
+    await setDoc(doc(db, 'appConfig', 'main'), localDefaults);
+    logLine(`✓ spotTypes: ${Object.keys(localDefaults.spotTypes).join(', ')}`, 'ok');
+    logLine(`✓ vehicles: ${Object.keys(localDefaults.vehicles).join(', ')}`, 'ok');
+    logLine(`✓ environmentTags: ${localDefaults.environmentTags.length} items`, 'ok');
+    logLine(`✓ services: ${Object.keys(localDefaults.services).join(', ')}`, 'ok');
+    logLine('─── Completato! ───', 'info');
+    setCmpBadge('ok', '☁️ Aggiornato');
+    renderSummary(localDefaults, 'remote-summary');
+    showToast('✓ Config caricato su Firebase!');
+  } catch(e) {
+    logLine('Errore: ' + e.message, 'err');
+    showToast('Errore: ' + e.message, 'err');
+  } finally {
+    btn.disabled = false; btn.textContent = '🌱 CARICA DEFAULTS SU FIREBASE';
+  }
+};
+
+document.getElementById('btn-clear').onclick = async () => {
+  if (!currentUser) { showToast('Devi fare login', 'err'); return; }
+  if (!confirm('Eliminare il config da Firebase? L\'app userà i valori di config.json.')) return;
+  const btn = document.getElementById('btn-clear');
+  btn.disabled = true; btn.textContent = '⏳ Eliminazione...';
+  showLog();
+  try {
+    await deleteDoc(doc(db, 'appConfig', 'main'));
+    logLine('✓ appConfig/main eliminato', 'ok');
+    document.getElementById('remote-summary').innerHTML = '<div class="compare-item" style="color:#5a2020">— non presente —</div>';
+    setCmpBadge('warn', '⚠️ Non inizializzato');
+    showToast('✓ Config eliminato');
+  } catch(e) {
+    logLine('Errore: ' + e.message, 'err');
+    showToast('Errore: ' + e.message, 'err');
+  } finally {
+    btn.disabled = false; btn.textContent = '🗑 CANCELLA CONFIG FIREBASE';
+  }
+};
+
+function showLog() {
+  document.getElementById('log-wrap').style.display = 'block';
+}
+function logLine(text, type = 'info') {
+  const box = document.getElementById('log-box');
+  const ts = new Date().toLocaleTimeString('it', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const line = document.createElement('div');
+  line.className = 'log-line ' + type;
+  line.innerHTML = `<span class="log-ts">${ts}</span>${text}`;
+  box.appendChild(line);
+  box.scrollTop = box.scrollHeight;
+}
+
+let toastTimer;
+function showToast(msg, type = 'ok') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.background = type === 'err' ? '#3d1a1a' : '#1a3d1f';
+  el.style.color       = type === 'err' ? '#e48080' : '#a8e4a8';
+  el.style.borderColor = type === 'err' ? '#5a2020' : '#2a6a38';
+  el.style.opacity = '1';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.style.opacity = '0'; }, 3000);
+}
+</script>
+</body>
+</html>
