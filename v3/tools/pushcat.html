@@ -2,39 +2,54 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <title>Firebase Tags Seeder</title>
+  <title>Strepcamp Firebase Tags Upload</title>
 </head>
 <body>
-  <h2>Scrittura tags su Firestore</h2>
-  <button id="upload">Carica dati su Firebase</button>
+
+  <h2>Strepcamp - Google Login + Upload Tags</h2>
+
+  <button id="login">Login Google</button>
+  <button id="logout" style="display:none;">Logout</button>
+  <button id="upload" style="display:none;">Carica Tags</button>
+
+  <p id="status">Non loggato</p>
 
   <script type="module">
-    // =========================
-    // FIREBASE IMPORT (v9+)
-    // =========================
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+    import {
+      getFirestore,
+      doc,
+      setDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
     // =========================
-    // CONFIG FIREBASE
+    // FIREBASE CONFIG (TUO PROGETTO)
     // =========================
     const firebaseConfig = {
-    "apiKey": "AIzaSyADUSmmfmYIB_7zQNC9YvPJ4yKHQfdoSgQ",
-    "authDomain": "strepcamp.firebaseapp.com",
-    "projectId": "strepcamp",
-    "storageBucket": "strepcamp.firebasestorage.app",
-    "messagingSenderId": "733597281103",
-    "appId": "1:733597281103:web:55ddade1f918ccd686733a"
+      apiKey: "AIzaSyADUSmmfmYIB_7zQNC9YvPJ4yKHQfdoSgQ",
+      authDomain: "strepcamp.firebaseapp.com",
+      projectId: "strepcamp",
+      storageBucket: "strepcamp.firebasestorage.app",
+      messagingSenderId: "733597281103",
+      appId: "1:733597281103:web:55ddade1f918ccd686733a"
     };
 
-    // =========================
-    // INIT
-    // =========================
     const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
     const db = getFirestore(app);
 
+    const provider = new GoogleAuthProvider();
+
     // =========================
-    // DATA DA INSERIRE
+    // DATA TAGS
     // =========================
     const tagsData = {
       spotTypes: {
@@ -43,8 +58,8 @@
         camping:     { label: "Camping",     color: "#3b7ade", markerColor: "#2a5ab8" }
       },
       vehicles: {
-        tenda:   { label: "TENDA",         emoji: "⛺" },
-        rooftop: { label: "TENDA DA TETTO","emoji": "🚐" }
+        tenda: { label: "TENDA", emoji: "⛺" },
+        rooftop: { label: "TENDA DA TETTO", emoji: "🚐" }
       },
       environmentTags: [
         "🌊 Mare","⛰ Montagna","🌄 Colline","♨️ Terme","🏛 Cultura",
@@ -52,34 +67,78 @@
         "🍷 Vino & Cibo","🚴 Sport"
       ],
       services: {
-        acqua:       "💧 Acqua",
-        parcheggio:  "🅿️ Parcheggio",
-        sentieri:    "🥾 Sentieri",
-        fuochi:      "🔥 Fuochi",
-        docce:       "🚿 Docce",
-        bagni:       "🚻 Bagni",
-        ristoro:     "🍽️ Ristoro",
-        wifi:        "📶 WiFi",
+        acqua: "💧 Acqua",
+        parcheggio: "🅿️ Parcheggio",
+        sentieri: "🥾 Sentieri",
+        fuochi: "🔥 Fuochi",
+        docce: "🚿 Docce",
+        bagni: "🚻 Bagni",
+        ristoro: "🍽️ Ristoro",
+        wifi: "📶 WiFi",
         elettricita: "⚡ Elettricità",
-        animali:     "🐾 Animali ok"
+        animali: "🐾 Animali ok"
       }
     };
 
     // =========================
-    // UPLOAD FUNCTION
+    // UI
     // =========================
-    async function uploadTags() {
-      try {
-        await setDoc(doc(db, "tags", "config"), tagsData);
-        alert("Dati caricati con successo su Firestore!");
-        console.log("Upload completato:", tagsData);
-      } catch (err) {
-        console.error("Errore upload Firestore:", err);
-        alert("Errore durante il caricamento, controlla console.");
-      }
-    }
+    const loginBtn = document.getElementById("login");
+    const logoutBtn = document.getElementById("logout");
+    const uploadBtn = document.getElementById("upload");
+    const status = document.getElementById("status");
 
-    document.getElementById("upload").addEventListener("click", uploadTags);
+    // =========================
+    // LOGIN GOOGLE
+    // =========================
+    loginBtn.onclick = async () => {
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (err) {
+        console.error("Errore login:", err);
+      }
+    };
+
+    // =========================
+    // LOGOUT
+    // =========================
+    logoutBtn.onclick = async () => {
+      await signOut(auth);
+    };
+
+    // =========================
+    // UPLOAD FIRESTORE
+    // =========================
+    uploadBtn.onclick = async () => {
+      try {
+        await setDoc(doc(db, "tags", "config"), tagsData, { merge: true });
+        alert("Upload completato su Firestore");
+      } catch (err) {
+        console.error("Errore upload:", err);
+        alert("Errore upload, controlla console");
+      }
+    };
+
+    // =========================
+    // AUTH STATE
+    // =========================
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        status.textContent = "Loggato: " + user.email;
+
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "inline-block";
+        uploadBtn.style.display = "inline-block";
+
+      } else {
+        status.textContent = "Non loggato";
+
+        loginBtn.style.display = "inline-block";
+        logoutBtn.style.display = "none";
+        uploadBtn.style.display = "none";
+      }
+    });
+
   </script>
 </body>
 </html>
