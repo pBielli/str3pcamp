@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0a1409">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Str3pcamp Tools</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Crimson+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    :root {
+      --bg-deep: #060d06; --bg-dark: #0a1409; --bg-card: #0e1c0f; --bg-input: #0d1a0e;
+      --border-dim: #182c1b; --border-mid: #1e3d22; --border-hi: #2d6035;
+      --accent: #3d8a4e; --accent-hi: #4da862;
+      --text-dim: #2d5a32; --text-mid: #4a7a4e; --text-lo: #6a9a6e;
+      --text-main: #a8d4a8; --text-hi: #c8e4b8; --text-body: #e0e8d8;
+      --gold: #f0b429;
+    }
+    html, body { min-height: 100vh; background: var(--bg-deep); color: var(--text-body); font-family: 'Crimson Pro', Georgia, serif; -webkit-font-smoothing: antialiased; }
+    body { display: flex; flex-direction: column; }
+
+    .header { padding: 20px; border-bottom: 1px solid var(--border-dim); }
+    .title { font-size: 28px; font-weight: 300; color: var(--text-hi); margin-bottom: 4px; }
+    .subtitle { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; }
+
+    .container { flex: 1; padding: 24px 20px; overflow-y: auto; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+
+    .card {
+      background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: 12px; 
+      padding: 20px; display: flex; flex-direction: column; gap: 12px; 
+      text-decoration: none; color: inherit; cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .card:hover {
+      border-color: var(--accent-hi); background: var(--bg-dark);
+      transform: translateY(-2px);
+    }
+
+    .card-icon { font-size: 32px; line-height: 1; }
+    .card-title { font-size: 16px; font-weight: 600; color: var(--text-main); }
+    .card-desc { font-size: 12px; color: var(--text-lo); line-height: 1.5; }
+
+    .footer { padding: 16px 20px; border-top: 1px solid var(--border-dim); background: var(--bg-dark); font-family: 'Space Mono', monospace; font-size: 10px; color: var(--text-dim); text-align: center; }
+
+    @media (max-width: 600px) {
+      .container { padding: 16px; }
+      .grid { grid-template-columns: 1fr; }
+      .title { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="title">⚙️ Str3pcamp Tools</div>
+  <div class="subtitle">Gestione & Admin</div>
+</div>
+
+<div class="container">
+  <div class="grid">
+    
+    <!-- CATEGORIE -->
+    <a href="./categories.html" class="card">
+      <div class="card-icon">🏷️</div>
+      <div class="card-title">Categorie</div>
+      <div class="card-desc">Gestisci tipi di posto, veicoli, ambienti e servizi disponibili</div>
+    </a>
+
+    <!-- SEED CONFIG -->
+    <a href="./seed-config.html" class="card">
+      <div class="card-icon">🌱</div>
+      <div class="card-title">Seed Config</div>
+      <div class="card-desc">Sincronizza configurazione da config.json a Firebase Firestore</div>
+    </a>
+
+    <!-- TRASFERIMENTO DB -->
+    <a href="./transfer.html" class="card">
+      <div class="card-icon">🔄</div>
+      <div class="card-title">Trasferimento DB</div>
+      <div class="card-desc">Migra spot tra database vecchio e nuovo</div>
+    </a>
+
+    <!-- PUSH CAT (TAG UPLOAD) -->
+    <a href="./pushcat.html" class="card">
+      <div class="card-icon">📤</div>
+      <div class="card-title">Upload Tags</div>
+      <div class="card-desc">Carica manualmente le tag di configurazione su Firestore</div>
+    </a>
+
+  </div>
+</div>
+
+<div class="footer">
+  Str3pcamp v2.0 · <a href="../index.html" style="color:var(--text-lo);text-decoration:none">← Torna all'app</a>
+</div>
+
+</body>
+</html>

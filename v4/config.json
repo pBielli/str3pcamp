@@ -1,0 +1,100 @@
+{
+  "app": {
+    "name": "Str3pcamp",
+    "shortName": "Str3pcamp",
+    "description": "Campeggio libero in Europa",
+    "version": "2.0.0",
+    "locale": "it",
+    "languages": {
+      "it": "Italiano",
+      "en": "English"
+    },
+    "themeColor": "#1f3a23",
+    "backgroundColor": "#081006"
+  },
+  "map": {
+    "defaultCenter": [45.5, 12],
+    "defaultZoom": 5,
+    "defaultLayer": "street",
+    "layers": {
+      "street": {
+        "label": "Mappa",
+        "emoji": "🗺",
+        "url": "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+        "attribution": "© CartoDB © OpenStreetMap",
+        "maxZoom": 19,
+        "subdomains": "abcd"
+      },
+      "satellite": {
+        "label": "Satellite",
+        "emoji": "🛰",
+        "url": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        "attribution": "© Esri World Imagery",
+        "maxZoom": 19
+      },
+      "topo": {
+        "label": "Topo",
+        "emoji": "⛰",
+        "url": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+        "attribution": "© Esri World Topo",
+        "maxZoom": 19
+      }
+    },
+    "userLocationMarker": {
+      "radius": 8,
+      "color": "#3d8a4e",
+      "fillColor": "#5daa6e",
+      "fillOpacity": 0.85,
+      "weight": 2
+    }
+  },
+  "firebase": {
+    "apiKey": "AIzaSyADUSmmfmYIB_7zQNC9YvPJ4yKHQfdoSgQ",
+    "authDomain": "strepcamp.firebaseapp.com",
+    "projectId": "strepcamp",
+    "storageBucket": "strepcamp.firebasestorage.app",
+    "messagingSenderId": "733597281103",
+    "appId": "1:733597281103:web:55ddade1f918ccd686733a"
+  },
+  "storage": {
+    "localKey": "str3pcamp"
+  },
+  "placesApi": {
+    "nominatimUrl": "https://nominatim.openstreetmap.org/search",
+    "nominatimReverse": "https://nominatim.openstreetmap.org/reverse",
+    "photonUrl": "https://photon.komoot.io/api/"
+  },
+  "remoteTags": {
+    "collection": "tags",
+    "doc": "config"
+  },
+  "defaultTags": {
+    "spotTypes": {
+      "accoglienza": { "label": "Accoglienza", "color": "#e8a030", "markerColor": "#c47d10" },
+      "libero":      { "label": "Libero",      "color": "#3d8a4e", "markerColor": "#2a6a38" },
+      "camping":     { "label": "Camping",     "color": "#3b7ade", "markerColor": "#2a5ab8" }
+    },
+    "vehicles": {
+      "tenda":   { "label": "TENDA",         "emoji": "⛺" },
+      "rooftop": { "label": "TENDA DA TETTO","emoji": "🚐" }
+    },
+    "environmentTags": [
+      "🌊 Mare","⛰ Montagna","🌄 Colline","♨️ Terme","🏛 Cultura",
+      "🎡 Attrazioni","🌲 Foresta","🏞 Lago","🌾 Pianura","🛶 Fiume",
+      "🍷 Vino & Cibo","🚴 Sport"
+    ],
+    "services": {
+      "acqua":       "💧 Acqua",
+      "parcheggio":  "🅿️ Parcheggio",
+      "sentieri":    "🥾 Sentieri",
+      "fuochi":      "🔥 Fuochi",
+      "docce":       "🚿 Docce",
+      "bagni":       "🚻 Bagni",
+      "ristoro":     "🍽️ Ristoro",
+      "wifi":        "📶 WiFi",
+      "elettricita": "⚡ Elettricità",
+      "animali":     "🐾 Animali ok"
+    }
+  },
+  "defaultSpots": []
+}

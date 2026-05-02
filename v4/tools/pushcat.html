@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1409">
+  <title>Upload Tags · Str3pcamp</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Crimson+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    :root {
+      --bg-deep: #060d06; --bg-dark: #0a1409; --bg-card: #0e1c0f;
+      --border-dim: #182c1b; --border-mid: #1e3d22; --border-hi: #2d6035;
+      --accent: #3d8a4e; --accent-hi: #4da862;
+      --text-dim: #2d5a32; --text-mid: #4a7a4e; --text-lo: #6a9a6e;
+      --text-main: #a8d4a8; --text-hi: #c8e4b8; --text-body: #e0e8d8;
+      --gold: #f0b429;
+    }
+    html, body { min-height: 100%; background: var(--bg-deep); color: var(--text-body); font-family: 'Crimson Pro', Georgia, serif; -webkit-font-smoothing: antialiased; }
+    body { padding: 0; }
+
+    .page-header { padding: 16px 16px 0; }
+    .page-title { font-size: 22px; font-weight: 300; color: var(--text-main); }
+    .page-sub { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; margin-top: 3px; }
+    .page-status { font-family: 'Space Mono', monospace; font-size: 10px; margin-top: 8px; padding: 5px 10px; border-radius: 6px; background: var(--bg-card); border: 1px solid var(--border-dim); display: inline-block; }
+    .page-status.ok { color: var(--accent-hi); border-color: var(--border-hi); }
+    .page-status.err { color: #e48080; border-color: #5a2020; }
+    .page-status.loading { color: var(--gold); border-color: #5a4a20; }
+
+    .content { padding: 20px 16px; }
+
+    .info-box { background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: 12px; padding: 14px 16px; font-size: 13px; color: var(--text-lo); line-height: 1.6; margin-bottom: 16px; }
+    .info-box strong { color: var(--text-main); font-weight: 600; }
+
+    .card { background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+    .card-head { display: flex; align-items: center; justify-content: space-between; padding: 13px 14px; border-bottom: 1px solid var(--border-dim); }
+    .card-title { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--text-mid); letter-spacing: 1px; text-transform: uppercase; }
+
+    .card-body { padding: 14px; }
+
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn-action {
+      padding: 11px 16px; border-radius: 8px; font-family: 'Space Mono', monospace;
+      font-size: 10px; letter-spacing: .5px; cursor: pointer; border: 1px solid; transition: all .2s;
+    }
+    .btn-upload { background: #1e4a28; border-color: var(--accent); color: #a8e4a8; flex: 1; min-width: 150px; }
+    .btn-upload:hover:not(:disabled) { background: #2a6a38; }
+    .btn-upload:disabled { opacity: .4; cursor: not-allowed; }
+    .btn-upload:active:not(:disabled) { transform: scale(.98); }
+
+    .log-box { background: var(--bg-deep); border: 1px solid var(--border-dim); border-radius: 8px; padding: 10px 12px; max-height: 300px; overflow-y: auto; font-family: 'Space Mono', monospace; font-size: 10px; line-height: 1.8; }
+    .log-line { margin: 2px 0; }
+    .log-line.ok { color: #4a9a4e; }
+    .log-line.err { color: #9a4a4a; }
+    .log-line.info { color: #4a7a8e; }
+
+    #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #1a3d1f; color: #a8e4a8; padding: 10px 18px; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 11px; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 9998; border: 1px solid #2a6a38; white-space: nowrap; }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="page-title">📤 Upload Tags</div>
+  <div class="page-sub">Carica categorie su Firestore</div>
+  <div class="page-status loading" id="page-status">⏳ Connessione...</div>
+</div>
+
+<div class="content">
+
+  <div class="info-box">
+    Questo tool carica le categorie (tipi di posto, veicoli, ambienti, servizi) 
+    dalla configurazione locale nella raccolta <strong>tags/config</strong> su Firebase Firestore.<br><br>
+    Usa questo quando vuoi <strong>distribuire una nuova versione delle categorie</strong> 
+    a tutti gli utenti dell'app.
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">🔐 AUTENTICAZIONE</span>
+    </div>
+    <div class="card-body">
+      <div class="btn-row">
+        <button class="btn-action btn-upload" id="login-btn">🔑 Login Google</button>
+        <button class="btn-action btn-upload" id="logout-btn" style="display:none;background:#2a1212;border-color:#5a2020;color:#e48080">✕ Logout</button>
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:var(--text-lo)" id="auth-status">Non loggato</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">📊 DATI DISPONIBILI</span>
+    </div>
+    <div class="card-body" id="stats-body">
+      <div style="color:var(--text-dim)">Caricamento...</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">📤 CARICA</span>
+    </div>
+    <div class="card-body">
+      <div class="btn-row">
+        <button class="btn-action btn-upload" id="upload-btn" disabled>📤 CARICA TAGS SU FIREBASE</button>
+      </div>
+      <div class="log-box" id="log-box" style="margin-top:12px;display:none"></div>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import { initToolbar } from '../js/toolbar.js';
+
+// Load centralized config
+const config = await fetch('../config.json').then(r => r.json());
+await initToolbar({ title: 'UPLOAD TAGS', firebaseConfig: config.firebase, currentPage: 'pushcat' });
+
+// Firebase imports
+const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+const { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+const { getFirestore, doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+
+// Initialize Firebase with centralized config
+const app = getApps().length ? getApps()[0] : initializeApp(config.firebase);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+
+let currentUser = null;
+
+// UI Elements
+const loginBtn = document.getElementById('login-btn');
+const logoutBtn = document.getElementById('logout-btn');
+const uploadBtn = document.getElementById('upload-btn');
+const authStatus = document.getElementById('auth-status');
+const pageStatus = document.getElementById('page-status');
+const logBox = document.getElementById('log-box');
+
+// Tag data from config
+const tagsData = {
+  spotTypes:       config.defaultTags?.spotTypes || {},
+  vehicles:        config.defaultTags?.vehicles || {},
+  environmentTags: config.defaultTags?.environmentTags || [],
+  services:        config.defaultTags?.services || {}
+};
+
+// Render stats
+function renderStats() {
+  const stats = document.getElementById('stats-body');
+  stats.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px">
+      <div style="background:var(--bg-deep);padding:8px;border-radius:6px;border:1px solid var(--border-dim)">
+        <div style="color:var(--text-dim);font-size:10px;margin-bottom:3px">Tipi di posto</div>
+        <div style="color:var(--text-hi);font-weight:600">${Object.keys(tagsData.spotTypes).length}</div>
+      </div>
+      <div style="background:var(--bg-deep);padding:8px;border-radius:6px;border:1px solid var(--border-dim)">
+        <div style="color:var(--text-dim);font-size:10px;margin-bottom:3px">Veicoli</div>
+        <div style="color:var(--text-hi);font-weight:600">${Object.keys(tagsData.vehicles).length}</div>
+      </div>
+      <div style="background:var(--bg-deep);padding:8px;border-radius:6px;border:1px solid var(--border-dim)">
+        <div style="color:var(--text-dim);font-size:10px;margin-bottom:3px">Ambienti</div>
+        <div style="color:var(--text-hi);font-weight:600">${tagsData.environmentTags.length}</div>
+      </div>
+      <div style="background:var(--bg-deep);padding:8px;border-radius:6px;border:1px solid var(--border-dim)">
+        <div style="color:var(--text-dim);font-size:10px;margin-bottom:3px">Servizi</div>
+        <div style="color:var(--text-hi);font-weight:600">${Object.keys(tagsData.services).length}</div>
+      </div>
+    </div>
+  `;
+}
+
+renderStats();
+
+// Login
+loginBtn.onclick = async () => {
+  try {
+    await signInWithPopup(auth, provider);
+  } catch (err) {
+    showToast('Errore login: ' + err.message, 'err');
+  }
+};
+
+// Logout
+logoutBtn.onclick = async () => {
+  await signOut(auth);
+};
+
+// Upload to Firestore
+uploadBtn.onclick = async () => {
+  if (!currentUser) { showToast('Devi fare login', 'err'); return; }
+  
+  uploadBtn.disabled = true;
+  uploadBtn.textContent = '⏳ Caricamento...';
+  logBox.style.display = 'block';
+  logBox.innerHTML = '';
+
+  logLine('Inizio caricamento su Firestore...', 'info');
+
+  try {
+    const tagPath = config.remoteTags?.doc || 'config';
+    const tagCollection = config.remoteTags?.collection || 'tags';
+    
+    logLine(`Destinazione: ${tagCollection}/${tagPath}`, 'info');
+    logLine('Preparazione dati...', 'info');
+
+    const payload = {
+      spotTypes: tagsData.spotTypes,
+      vehicles: tagsData.vehicles,
+      environmentTags: tagsData.environmentTags,
+      services: tagsData.services,
+      updatedAt: new Date().toISOString(),
+      updatedBy: currentUser.email
+    };
+
+    await setDoc(doc(db, tagCollection, tagPath), payload, { merge: true });
+
+    logLine(`✓ spotTypes: ${Object.keys(tagsData.spotTypes).join(', ')}`, 'ok');
+    logLine(`✓ vehicles: ${Object.keys(tagsData.vehicles).join(', ')}`, 'ok');
+    logLine(`✓ environmentTags: ${tagsData.environmentTags.length} items`, 'ok');
+    logLine(`✓ services: ${Object.keys(tagsData.services).join(', ')}`, 'ok');
+    logLine('─── Completato! ───', 'ok');
+    
+    pageStatus.className = 'page-status ok';
+    pageStatus.textContent = '✓ Upload completato';
+    showToast('✓ Tags caricati su Firestore!', 'ok');
+
+  } catch (err) {
+    logLine('✗ Errore: ' + err.message, 'err');
+    showToast('Errore: ' + err.message, 'err');
+  } finally {
+    uploadBtn.disabled = false;
+    uploadBtn.textContent = '📤 CARICA TAGS SU FIREBASE';
+  }
+};
+
+// Auth state listener
+onAuthStateChanged(auth, user => {
+  currentUser = user;
+  if (user) {
+    loginBtn.style.display = 'none';
+    logoutBtn.style.display = 'block';
+    uploadBtn.disabled = false;
+    authStatus.textContent = '✓ Loggato come: ' + user.email;
+    pageStatus.className = 'page-status ok';
+    pageStatus.textContent = '✓ Connesso';
+  } else {
+    loginBtn.style.display = 'block';
+    logoutBtn.style.display = 'none';
+    uploadBtn.disabled = true;
+    authStatus.textContent = '✗ Non loggato';
+    pageStatus.className = 'page-status loading';
+    pageStatus.textContent = '⚠️ Accedi per caricare';
+  }
+});
+
+function logLine(text, type = 'info') {
+  const line = document.createElement('div');
+  line.className = 'log-line ' + type;
+  line.textContent = text;
+  logBox.appendChild(line);
+  logBox.scrollTop = logBox.scrollHeight;
+}
+
+let toastTimer;
+function showToast(msg, type = 'ok') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.background = type === 'err' ? '#3d1a1a' : '#1a3d1f';
+  el.style.color = type === 'err' ? '#e48080' : '#a8e4a8';
+  el.style.borderColor = type === 'err' ? '#5a2020' : '#2a6a38';
+  el.style.opacity = '1';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.style.opacity = '0'; }, 3000);
+}
+</script>
+</body>
+</html>
