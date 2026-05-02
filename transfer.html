@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Firestore Migration Tool</title>
+<style>
+  body {
+    font-family: monospace;
+    background: #0a1409;
+    color: #a8d4a8;
+    padding: 20px;
+  }
+  h1 { color: #c8e4b8; }
+  button {
+    background: #1a3d22;
+    border: 1px solid #3d8a4e;
+    color: #a8e4a8;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 5px 0;
+  }
+  button:hover { background: #245a30; }
+  #log {
+    margin-top: 20px;
+    padding: 10px;
+    background: #071007;
+    border: 1px solid #1e3d22;
+    height: 400px;
+    overflow: auto;
+    white-space: pre-wrap;
+  }
+  .danger { color: #ff8080; }
+  .ok { color: #7ab880; }
+</style>
+</head>
+<body>
+
+<h1>🔥 Firestore Migration Tool</h1>
+
+<p>Trasferisce dati da <b>vecchio DB → nuovo DB</b> (collection: spots)</p>
+
+<button onclick="startMigration()">🚀 Avvia Migrazione</button>
+<button onclick="clearLog()">🧹 Pulisci Log</button>
+
+<div id="log"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+// 🔴 VECCHIO DB
+const OLD_CONFIG = {
+  apiKey: "INSERISCI_QUI",
+  authDomain: "OLD.firebaseapp.com",
+  projectId: "OLD",
+  storageBucket: "OLD.appspot.com",
+  messagingSenderId: "XXX",
+  appId: "XXX"
+};
+
+// 🟢 NUOVO DB
+const NEW_CONFIG = {
+  apiKey: "AIzaSyADUSmmfmYIB_7zQNC9YvPJ4yKHQfdoSgQ",
+  authDomain: "strepcamp.firebaseapp.com",
+  projectId: "strepcamp",
+  storageBucket: "strepcamp.firebasestorage.app",
+  messagingSenderId: "733597281103",
+  appId: "1:733597281103:web:55ddade1f918ccd686733a"
+};
+
+const oldApp = initializeApp(OLD_CONFIG, "old");
+const newApp = initializeApp(NEW_CONFIG, "new");
+
+const oldDb = getFirestore(oldApp);
+const newDb = getFirestore(newApp);
+
+const logBox = document.getElementById("log");
+
+function log(msg, type="") {
+  const div = document.createElement("div");
+  div.textContent = msg;
+  if (type) div.className = type;
+  logBox.appendChild(div);
+  logBox.scrollTop = logBox.scrollHeight;
+}
+
+window.clearLog = () => {
+  logBox.innerHTML = "";
+};
+
+// 🚀 MIGRAZIONE
+window.startMigration = async () => {
+  try {
+    log("▶ Avvio migrazione...", "ok");
+
+    const snap = await getDocs(collection(oldDb, "spots"));
+
+    log(`📦 Documenti trovati: ${snap.size}`);
+
+    let count = 0;
+
+    for (const d of snap.docs) {
+      const data = d.data();
+
+      await setDoc(
+        doc(newDb, "spots", d.id),
+        data
+      );
+
+      count++;
+      log(`✔ Migrato: ${d.id}`);
+    }
+
+    log(`🎉 COMPLETATO: ${count} documenti migrati`, "ok");
+
+  } catch (err) {
+    console.error(err);
+    log("❌ ERRORE: " + err.message, "danger");
+  }
+};
+</script>
+
+</body>
+</html>
