@@ -87,44 +87,5 @@
     "animali":     "🐾 Animali ok"
   },
   "defaultSpots": [
-    {
-      "id": 1,
-      "name": "Sosta libera - Genova Levante",
-      "lat": 44.4094352, "lng": 8.6643941,
-      "region": "Liguria · Italia",
-      "city": "Genova",
-      "spotType": "libero",
-      "vehicles": ["tenda","rooftop"],
-      "environments": ["🌊 Mare","🌄 Colline"],
-      "description": "Sosta libera vicino al mare, nei dintorni di Genova. Ottima posizione per chi ama la costa ligure con le sue calette e i borghi caratteristici.",
-      "services": [],
-      "rating": 5
-    },
-    {
-      "id": 2,
-      "name": "Sosta libera - Cinque Terre entroterra",
-      "lat": 44.041617, "lng": 9.9681311,
-      "region": "Liguria · Italia",
-      "city": "La Spezia",
-      "spotType": "libero",
-      "vehicles": ["tenda","rooftop"],
-      "environments": ["🌊 Mare","⛰ Montagna","🌄 Colline"],
-      "description": "Sosta libera nell'entroterra delle Cinque Terre, tra colline e mare. Paesaggi spettacolari con vista sul golfo e sentieri verso i borghi patrimonio UNESCO.",
-      "services": [],
-      "rating": 5
-    },
-    {
-      "id": 3,
-      "name": "Sosta libera - Terme di San Filippo",
-      "lat": 42.9258709, "lng": 11.7000723,
-      "region": "Val d'Orcia · Toscana · Italia",
-      "city": "Castiglione d'Orcia",
-      "spotType": "libero",
-      "vehicles": ["rooftop"],
-      "environments": ["♨️ Terme","🌄 Colline","🏛 Cultura","🎡 Attrazioni"],
-      "description": "Sosta libera vicinissima alle Terme di San Filippo e alla celebre 'Balena Bianca'. Immersa nella magia della Val d'Orcia.",
-      "services": [],
-      "rating": 5
-    }
   ]
 }
